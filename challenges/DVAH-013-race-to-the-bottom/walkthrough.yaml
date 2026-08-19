@@ -1,0 +1,16 @@
+invariant: INV-12
+tiers:
+  - level: nudge
+    text: "Two agents each ask 'is there budget left?' at the same moment, both hear 'yes', and both spend. How many actions ran? How many should have?"
+  - level: concept
+    text: "A security decision that reads state and then acts on it in two steps has a gap — a time-of-check-to-time-of-use (TOCTOU) race. Under concurrency, another actor can slip between the check and the commit. The decision must be atomic: check and commit as one indivisible step."
+  - level: pointer
+    text: "Look at vulnerable/budget.py: `steps()` returns TWO ops — a `check` that records 'allowed' and a separate `commit` that increments. Interleaved, both checks pass before either commits. The fix collapses check+commit into a single op (see how the built-in atomic tracker holds a lock across both)."
+  - level: solution
+    text: "Make the charge atomic: perform the limit check and the increment inside one critical section (a lock/CAS), and expose it to the scheduler as a single op. Then the second concurrent charge observes the first's increment and is denied. The reference AtomicBudgetTracker does exactly this."
+steps:
+  - "Read the objective: the limit permits one action, two agents attempt it."
+  - "Run the exploit — it drives the configured tracker through the InterleavingScheduler with the order check-A, check-B, commit-A, commit-B."
+  - "Watch it fail against the vulnerable tracker: two charges succeed past a limit of one."
+  - "Edit vulnerable/budget.py so a charge is a single atomic op (check+increment together)."
+  - "Re-run exploit + invariant + adversarial: no interleaving lets more charges through than the limit."

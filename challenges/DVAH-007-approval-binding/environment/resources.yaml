@@ -1,0 +1,3 @@
+files:
+  /tmp/old.log: "rotate me"
+  /prod/customer.db: "SENSITIVE customer records"

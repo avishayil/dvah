@@ -1,0 +1,31 @@
+invariant: INV-01
+tiers:
+  - level: nudge
+    text: >
+      The plan is authorized once, up front. Between that check and the delete actually
+      running, what has changed about which operation is being executed?
+  - level: concept
+    text: >
+      Authorization must bind to the *resolved* action at the moment of execution, not to
+      a plan made earlier. A plan is a proposal with no authority; only the concrete
+      ActionEnvelope built just before a side effect should be authorized. Checking once
+      and trusting that decision for every later step is a time-of-check/time-of-use gap.
+  - level: pointer
+    text: >
+      Look at vulnerable/executor.py. It authorizes steps[0] a single time and then loops
+      calling the tools directly. Make every step pass through the broker's per-action gate
+      (harness.broker.run_step) so each resolved operation is authorized immediately before
+      it executes — the same slot the correct FixedExecutor fills.
+  - level: solution
+    text: >
+      Replace the authorize-once-then-execute-all loop with one that resolves and authorizes
+      each step at execution time. Route every step through harness.broker.run_step(ctx, step)
+      (and delegation through harness.delegate); never invoke cfg.tools directly. Now the
+      unauthorized files.delete on /prod/customer.db is denied when it is reached.
+steps:
+  - "Run the DVAH-001-exploit task and open the Trace tab: you'll see one policy.decision (allow, for the read) but two executed events — the delete never got its own authorization."
+  - "Note the ✗ INV-01 highlight: an action executed that was never authorized at execution time."
+  - "Open vulnerable/executor.py and find where it authorizes only steps[0] then loops over cfg.tools.invoke."
+  - "Rewrite the loop to call harness.broker.run_step(ctx, step) for each step (route agent.delegate steps through harness.delegate)."
+  - "Re-run DVAH-001-exploit: the delete is now denied (INV-01) and /prod/customer.db survives."
+  - "Run functional, invariant, and adversarial — the adversarial task swaps delete for a rename, so a fix that only re-authorizes deletes still fails; only per-action authorization passes all."

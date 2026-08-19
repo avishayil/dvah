@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DVAH — Damn Vulnerable Agent Harness</title>
+    <meta
+      name="description"
+      content="A hands-on lab for engineers who ship AI agents: exploit a real architectural bug in an insecure agent runtime, trace it, patch it, and prove the fix holds. No security background needed."
+    />
+    <meta property="og:title" content="DVAH — Damn Vulnerable Agent Harness" />
+    <meta
+      property="og:description"
+      content="Make your AI agents safe by breaking one and fixing it. 14 labs, 14 invariants, exploit → patch → prove."
+    />
+    <meta property="og:image" content="./hero.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <!-- hero -->
+      <section class="hero hero-glow reveal">
+        <img src="./hero.png" alt="DVAH — Damn Vulnerable Agent Harness" />
+        <div class="eyebrow mono">Damn Vulnerable Agent Harness</div>
+        <h1>
+          Make your AI agents safe — by
+          <span class="accent">breaking one</span> and fixing it.
+        </h1>
+        <p class="lead">
+          DVAH is a hands-on lab for engineers who ship agents that call tools, spend money,
+          or touch prod. Take a deliberately-insecure agent runtime, exploit a real
+          architectural bug, see exactly why it happened, patch it, and prove the fix
+          holds — <span style="color: var(--fg)">no security background needed.</span>
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="./demo.html">Start with DVAH-001 &rarr;</a>
+          <a class="btn" href="https://github.com/avishayil/dvah#run-the-full-stack-web-ui--api">Get started</a>
+          <span class="cta-note">a guided, cursor-driven walkthrough · exploit &rarr; fix &rarr; prove</span>
+        </div>
+      </section>
+
+      <!-- stat strip -->
+      <section aria-label="At a glance" class="stats reveal">
+        <span class="pill"><b>14</b>&nbsp;<span class="muted">labs</span></span>
+        <span class="pill"><b>14</b>&nbsp;<span class="muted">invariants</span></span>
+        <span class="pill muted">
+          exploit <span class="accent">&rarr;</span> patch
+          <span class="accent">&rarr;</span> prove
+        </span>
+        <span class="pill"><b>4</b>&nbsp;<span class="muted">test tiers per lab</span></span>
+      </section>
+
+      <!-- how it works -->
+      <section class="reveal">
+        <div class="section-head">
+          <h2>How a lab works</h2>
+          <p>Every lab is the same loop. It takes about ten minutes and you steer the whole way.</p>
+        </div>
+        <ol class="grid grid-4" style="list-style: none; padding: 0">
+          <li class="soft-card step">
+            <div class="step-no">Step 1</div>
+            <div class="step-label">Exploit</div>
+            <div class="step-you">run the attack and watch it succeed</div>
+          </li>
+          <li class="soft-card step">
+            <div class="step-no">Step 2</div>
+            <div class="step-label">Trace</div>
+            <div class="step-you">see step-by-step why it worked</div>
+          </li>
+          <li class="soft-card step">
+            <div class="step-no">Step 3</div>
+            <div class="step-label">Patch</div>
+            <div class="step-you">edit a few lines in the runtime</div>
+          </li>
+          <li class="soft-card step">
+            <div class="step-no">Step 4</div>
+            <div class="step-label">Prove</div>
+            <div class="step-you">tests + hidden mutations go green</div>
+          </li>
+        </ol>
+      </section>
+
+      <!-- features -->
+      <section class="reveal">
+        <div class="section-head">
+          <h2>Not a tutorial — a harness</h2>
+          <p>The runtime is real, the bugs are architectural, and your fix has to earn it.</p>
+        </div>
+        <div class="grid grid-3">
+          <div class="soft-card feature">
+            <div class="icon mono">◈</div>
+            <h3>Invariant-first grading</h3>
+            <p>
+              You aren't graded on style. Each lab pins a security rule an agent runtime
+              must never break, and your fix has to make that rule hold.
+            </p>
+          </div>
+          <div class="soft-card feature">
+            <div class="icon mono">◎</div>
+            <h3>Adversarial by design</h3>
+            <p>
+              A chaos engine mutates the attack after you patch. A fix that only handles the
+              demo won't survive the unseen variations.
+            </p>
+          </div>
+          <div class="soft-card feature">
+            <div class="icon mono">≣</div>
+            <h3>Live security trace + two scores</h3>
+            <p>
+              Every action flows through authorize → approve → run → record. Run labs
+              deterministically, against a live model, or replay a recording — and read two
+              scores: the deterministic <em>runtime security</em> verdict and what the model
+              actually did.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- who it's for -->
+      <section class="reveal">
+        <div class="grad-band audience">
+          <div class="section-head"><h2>Who it's for</h2></div>
+          <div class="grid grid-3">
+            <div class="role">
+              <b>Backend engineers</b>
+              <span>shipping tool-calling agents into real services</span>
+            </div>
+            <div class="role">
+              <b>Platform engineers</b>
+              <span>owning the runtime other teams build agents on</span>
+            </div>
+            <div class="role">
+              <b>AppSec engineers</b>
+              <span>who need agent threats in the muscle, not the slides</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- invariants -->
+      <section class="reveal">
+        <div class="list-head">
+          <h2>The 14 rules a safe runtime never breaks</h2>
+          <a href="https://github.com/avishayil/dvah/blob/main/docs/INVARIANTS.md">
+            what's an invariant? &rarr;
+          </a>
+        </div>
+        <div class="grid grid-2">
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-001-plan-time-authorization">
+            <span class="inv">INV-01</span
+            ><span class="txt">Check permission for every action right before it runs.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-002-privileged-child">
+            <span class="inv">INV-02</span
+            ><span class="txt">A sub-agent can't be more powerful than its parent.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-007-approval-binding">
+            <span class="inv">INV-03</span
+            ><span class="txt">Human approval is tied to the exact action, not the plan.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-004-secrets-in-context">
+            <span class="inv">INV-04</span
+            ><span class="txt">Secrets never reach the model's context.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-005-provenance-loss">
+            <span class="inv">INV-05</span
+            ><span class="txt">Every value keeps a "where did this come from?" tag.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-003-instruction-data-confusion">
+            <span class="inv">INV-06</span
+            ><span class="txt">Untrusted data can't become instructions; delegation can't mint budget.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-009-skill-upgrade">
+            <span class="inv">INV-07</span
+            ><span class="txt">A skill update can't silently gain new powers.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-008-tool-vs-operation">
+            <span class="inv">INV-08</span
+            ><span class="txt">Every action is attributable to a person + agent + delegation chain.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-010-continuous-authorization">
+            <span class="inv">INV-09</span
+            ><span class="txt">Authority is re-checked for long-running work; revocation takes effect.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-011-memory-poisoning">
+            <span class="inv">INV-10</span
+            ><span class="txt">Memory stays per-tenant and never acts as an instruction.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-012-tool-rug-pull">
+            <span class="inv">INV-11</span
+            ><span class="txt">Approval is tied to the tool's identity/version.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-013-race-to-the-bottom">
+            <span class="inv">INV-12</span
+            ><span class="txt">Security checks are atomic — races can't sneak past a limit.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-008-tool-vs-operation">
+            <span class="inv">INV-13</span
+            ><span class="txt">Authorization checks the exact operation, not just the tool.</span>
+          </a>
+          <a class="soft-card rule" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-014-mcp-egress">
+            <span class="inv">INV-14</span
+            ><span class="txt">Runtime boundaries are contained — the harness limits egress and pins tool-server identity.</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- labs -->
+      <section class="reveal">
+        <div class="list-head">
+          <h2>14 labs · beginner → advanced</h2>
+          <a href="https://github.com/avishayil/dvah/tree/main/challenges">open all &rarr;</a>
+        </div>
+        <div class="grid grid-2">
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-001-plan-time-authorization"><span class="lab-id">DVAH-001</span><span class="lab-name">Plan-time authorization</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-002-privileged-child"><span class="lab-id">DVAH-002</span><span class="lab-name">Privileged child</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-003-instruction-data-confusion"><span class="lab-id">DVAH-003</span><span class="lab-name">Instruction / data confusion</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-004-secrets-in-context"><span class="lab-id">DVAH-004</span><span class="lab-name">Secrets in context</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-005-provenance-loss"><span class="lab-id">DVAH-005</span><span class="lab-name">Provenance loss</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-006-infinite-delegation"><span class="lab-id">DVAH-006</span><span class="lab-name">Infinite delegation</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-007-approval-binding"><span class="lab-id">DVAH-007</span><span class="lab-name">Approval binding</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-008-tool-vs-operation"><span class="lab-id">DVAH-008</span><span class="lab-name">Tool vs operation</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-009-skill-upgrade"><span class="lab-id">DVAH-009</span><span class="lab-name">Skill upgrade</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-010-continuous-authorization"><span class="lab-id">DVAH-010</span><span class="lab-name">Continuous authorization</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-011-memory-poisoning"><span class="lab-id">DVAH-011</span><span class="lab-name">Memory poisoning</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-012-tool-rug-pull"><span class="lab-id">DVAH-012</span><span class="lab-name">Tool rug pull</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-013-race-to-the-bottom"><span class="lab-id">DVAH-013</span><span class="lab-name">Race to the bottom</span></a>
+          <a class="soft-card lab" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-014-mcp-egress"><span class="lab-id">DVAH-014</span><span class="lab-name">The unbounded tool server</span></a>
+        </div>
+      </section>
+
+      <!-- closing CTA -->
+      <section class="reveal">
+        <div class="grad-band closing">
+          <h2>Ready? Break your first agent runtime.</h2>
+          <p>
+            Start with the plan-time authorization bug in DVAH-001 — exploit it, trace it,
+            and prove your patch holds.
+          </p>
+          <div class="cta-row" style="margin-top: 0">
+            <a class="btn btn-primary" href="https://github.com/avishayil/dvah/tree/main/challenges/DVAH-001-plan-time-authorization">
+              Start with DVAH-001 &rarr;
+            </a>
+            <a class="btn" href="https://github.com/avishayil/dvah/tree/main/challenges">Browse all labs</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Built by <a href="https://avishay.co.il">Avishay Bar</a> ·
+      <a href="https://github.com/avishayil/dvah">github.com/avishayil/dvah</a>
+    </footer>
+
+  </body>
+</html>

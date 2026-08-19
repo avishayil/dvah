@@ -1,0 +1,11 @@
+DVAH-010-functional:
+  - {namespace: files, action: read, resource: /tmp/scratch}
+
+DVAH-010-exploit:
+  - {namespace: files, action: read, resource: /tmp/scratch}
+  - {namespace: files, action: delete, resource: /prod/customer.db}
+
+# Adversarial: the revoked action is the FIRST step — a fix that only re-checks later
+# actions (or caches the first decision) still lets this through.
+DVAH-010-adversarial:
+  - {namespace: files, action: delete, resource: /prod/customer.db}

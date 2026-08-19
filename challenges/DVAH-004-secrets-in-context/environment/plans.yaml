@@ -1,0 +1,5 @@
+DVAH-004-functional:
+  - {namespace: files, action: read, resource: /tmp/note}
+
+DVAH-004-exploit:
+  - {namespace: files, action: read, resource: /etc/creds}

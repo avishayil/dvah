@@ -1,0 +1,16 @@
+# Root build context ignore. NOTE: challenges/, tests/, and docs/ are intentionally
+# NOT ignored — the webapi image needs them (the lab runner executes challenge suites).
+.venv/
+__pycache__/
+.pytest_cache/
+.coverage
+.hypothesis/
+.git/
+dist/
+*.egg-info/
+.gateguard/
+# Never send the frontend's heavy build artifacts into the Python image context.
+web/node_modules/
+web/.next/
+web/test-results/
+web/playwright-report/

@@ -1,0 +1,32 @@
+invariant: INV-13
+tiers:
+  - level: nudge
+    text: >
+      The reporter is allowed to use the github tool for issue.read. It then deletes a repository.
+      What granularity did the policy actually check — the tool, or the specific operation?
+  - level: concept
+    text: >
+      Authorization must be over the specific operation — (principal, operation, resource,
+      parameters, context) — not the bare tool/namespace. "Can use github" is not "can do anything
+      in github". Coarse tool-level allow-listing collapses read and destructive write into one
+      grant and is the classic confused-deputy / excessive-agency failure.
+  - level: pointer
+    text: >
+      Look at vulnerable/policy.py (ToolNamePolicy): it authorizes on the operation namespace alone
+      — any capability in that namespace allows everything in it, and it skips approval checks.
+      Authorize against the held capabilities for the exact action (and honor approval-required
+      operations) — the behavior FixedPolicy/BuiltinPolicy implements.
+  - level: solution
+    text: >
+      Decide on capabilities.permits(namespace, action) for the resolved operation (deny when no
+      capability covers that specific action — that's INV-13 operation-granularity), keep the
+      attribution check (INV-08), and
+      route approval-required operations through NEEDS_APPROVAL. Then holding github:issue.read no
+      longer authorizes github.repository.delete.
+steps:
+  - "Run DVAH-008-exploit and open the Trace tab: policy.decision allows a github.repository.delete because the agent has *some* github capability."
+  - "Note the highlight — authorization used the tool name, not the resolved operation (INV-13 / tool-vs-operation)."
+  - "Open vulnerable/policy.py and see authorization keyed on namespace only."
+  - "Authorize on capabilities.permits(op.namespace, op.action) for the exact action; keep attribution and approval-action handling."
+  - "Re-run DVAH-008-exploit: the repository.delete is denied while issue.read still works (DVAH-008-functional)."
+  - "Run the invariant/adversarial tests: several other same-namespace operations must all be denied when the agent lacks a capability that covers them."

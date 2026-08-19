@@ -1,0 +1,4 @@
+root:
+  agent_id: ops-agent
+  capabilities:
+    - {namespace: files, action: delete}

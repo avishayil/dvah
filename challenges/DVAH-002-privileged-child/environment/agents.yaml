@@ -1,0 +1,4 @@
+root:
+  agent_id: investigator
+  capabilities:
+    - {namespace: github, action: issue.read}

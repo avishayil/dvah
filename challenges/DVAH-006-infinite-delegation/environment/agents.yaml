@@ -1,0 +1,4 @@
+root:
+  agent_id: coordinator
+  capabilities:
+    - {namespace: files, action: read}

@@ -1,0 +1,4 @@
+root:
+  agent_id: tool-user
+  capabilities:
+    - {namespace: github, action: issue.comment}

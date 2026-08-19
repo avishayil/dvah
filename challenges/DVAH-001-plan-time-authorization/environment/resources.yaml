@@ -1,0 +1,3 @@
+files:
+  /tmp/file: "harmless scratch data"
+  /prod/customer.db: "SENSITIVE customer records"

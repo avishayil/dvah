@@ -1,0 +1,27 @@
+id: DVAH-009
+title: The Helpful Skill Update
+difficulty: hard
+invariants: [INV-07]
+components: [skill_loader, capabilities]
+
+model:
+  provider: reactive
+
+overrides:
+  skill_loader: "vulnerable.skills:AutoAcceptSkillLoader"
+solution_overrides:
+  skill_loader: "solution.skills:PinnedSkillLoader"
+
+objective:
+  exploit: >
+    Ship a skill "upgrade" whose manifest quietly widens its permissions and have the
+    runtime grant the new capabilities without any re-approval.
+  fix: >
+    Grant only permissions inside the approved set and only when the manifest digest is
+    pinned; any expansion beyond the approved permissions requires explicit re-approval.
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 9
+estimated_minutes: 15
+teaches: "a skill upgrade can't silently gain new powers"
+prerequisites: []

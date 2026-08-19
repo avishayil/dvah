@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DVAH — Guided demo of DVAH-001</title>
+    <meta name="description" content="A guided, cursor-driven walkthrough of DVAH-001: exploit → trace → patch → prove." />
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      body { margin: 0; background: #000; color: var(--fg); font-family: var(--font-sans); }
+      .player { position: fixed; inset: 0; display: flex; flex-direction: column; }
+      .player-top { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1rem; font-size: 0.85rem; }
+      .player-top .mono { color: var(--accent); font-size: 0.75rem; }
+      .player-top a { color: var(--muted); }
+      .player-top a:hover { color: var(--fg); }
+      .stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 0 1rem; }
+      .frame { position: relative; width: 100%; max-width: min(96vw, 1500px); max-height: 76vh; aspect-ratio: 16 / 9;
+        overflow: hidden; border-radius: 0.5rem; border: 1px solid var(--border); background: var(--bg); box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+      .zoom { position: absolute; inset: 0; transition: transform 1200ms cubic-bezier(0.22,0.61,0.36,1); will-change: transform; }
+      .frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+      .cursor { position: absolute; z-index: 10; transform: translate(-8%, -8%); transition: left 850ms ease, top 850ms ease; pointer-events: none; }
+      .beat { position: absolute; bottom: 0.5rem; right: 0.75rem; z-index: 20; font-family: var(--font-mono); font-size: 0.62rem; color: color-mix(in srgb, var(--muted) 80%, transparent); }
+      .cursor svg { filter: drop-shadow(0 1px 2px rgba(0,0,0,0.8)); }
+      .ripple { position: absolute; left: -12px; top: -12px; width: 32px; height: 32px; border-radius: 9999px; background: color-mix(in srgb, var(--accent) 60%, transparent); animation: ping 0.5s ease-out; }
+      @keyframes ping { 0% { transform: scale(0.4); opacity: 0.8; } 100% { transform: scale(1.6); opacity: 0; } }
+      .caption { max-width: 56rem; margin: 0 auto; padding: 0 1rem 0.25rem; text-align: center; color: var(--muted); font-size: 0.9rem; line-height: 1.5; min-height: 3.25rem; }
+      .caption .count { color: var(--accent); font-size: 0.75rem; margin-right: 0.5rem; }
+      .controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; padding: 0 1rem 1rem; }
+      .dots { display: inline-flex; gap: 0.3rem; margin-left: 0.25rem; }
+      .dot { width: 0.4rem; height: 0.4rem; border-radius: 9999px; background: var(--border); }
+      .dot.on { background: var(--accent); }
+      @media (prefers-reduced-motion: reduce) { .cursor { transition: none; } .zoom { transition: none; } .ripple { animation: none; display: none; } }
+    </style>
+  </head>
+  <body>
+    <div class="player">
+      <div class="player-top">
+        <span class="mono">Guided demo · DVAH-001 — exploit → fix → prove</span>
+        <a href="./index.html">← Home</a>
+      </div>
+      <div class="stage">
+        <figure class="frame" id="frame">
+          <div class="zoom" id="zoom">
+            <img id="demo-img" src="" alt="" />
+            <span class="cursor" id="cursor" aria-hidden="true" style="display:none">
+              <svg width="26" height="26" viewBox="0 0 24 24"><path d="M4 2l6 15 2.5-6.5L19 8z" fill="#fff" stroke="#04262a" stroke-width="1.2"/></svg>
+            </span>
+          </div>
+          <span class="beat" id="beat"></span>
+        </figure>
+      </div>
+      <p class="caption" id="caption"></p>
+      <div class="controls">
+        <button type="button" class="btn" id="playpause" aria-label="Pause">⏸ Pause</button>
+        <button type="button" class="btn" id="prev" aria-label="Previous step">← Back</button>
+        <button type="button" class="btn" id="next" aria-label="Next step">Next →</button>
+        <button type="button" class="btn" id="restart" aria-label="Restart">↺ Restart</button>
+        <span class="dots" id="dots" aria-hidden="true"></span>
+        <a class="btn btn-primary" id="run-it" href="https://github.com/avishayil/dvah#run-the-full-stack-web-ui--api" style="display:none">Run it yourself →</a>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var frames = [], i = 0, playing = !reduced, timer = null, clickTimer = null;
+        var img = document.getElementById("demo-img"),
+          cap = document.getElementById("caption"),
+          zoom = document.getElementById("zoom"),
+          cursor = document.getElementById("cursor"),
+          dots = document.getElementById("dots"),
+          pp = document.getElementById("playpause"),
+          prev = document.getElementById("prev"),
+          next = document.getElementById("next"),
+          restart = document.getElementById("restart"),
+          beat = document.getElementById("beat"),
+          runIt = document.getElementById("run-it");
+        // Each slide plays 3 beats: FULL (whole frame) → ZOOM (into focus) → CLICK (cursor).
+        var BEAT_FULL = 3000, BEAT_ZOOM = 3000, BEAT_CLICK = 3000, GLIDE = 850;
+        var phase = "full";
+        var tFull = null, tZoom = null, tClick = null;
+        function clearBeats() { clearTimeout(tFull); clearTimeout(tZoom); clearTimeout(tClick); clearTimeout(clickTimer); }
+
+        // Zoom INTO the focus region (moderate, zoom by width, top-align, clamp so the frame
+        // always covers the stage). Mirrors the app player: scale = clamp(1, 1.7, 82/wPct).
+        function focusFor(f) {
+          var fo = f.focus;
+          if (!fo || fo.wPct <= 0) return { transform: "none", scale: 1 };
+          var scale = Math.max(1, Math.min(1.7, 82 / fo.wPct));
+          var fcx = fo.xPct + fo.wPct / 2;
+          var cover = function (v) { return Math.max(100 - 100 * scale, Math.min(0, v)); };
+          var tx = cover(50 - fcx * scale), ty = cover(2 - fo.yPct * scale);
+          return {
+            transform: "translate(" + tx.toFixed(2) + "%, " + ty.toFixed(2) + "%) scale(" + scale.toFixed(3) + ")",
+            scale: scale,
+          };
+        }
+
+        // Reflect the current phase onto the DOM (transform + cursor). Reduced-motion shows
+        // the settled zoomed+cursor state (no animation).
+        function applyPhase() {
+          var f = frames[i];
+          if (!f) return;
+          var fx = focusFor(f);
+          var zoomed = reduced || phase !== "full";
+          zoom.style.transformOrigin = "0 0";
+          zoom.style.transform = zoomed ? fx.transform : "none";
+          var showCursor = f.cursor && (reduced ? !!f.click : phase === "click");
+          if (showCursor) {
+            cursor.style.display = "";
+            cursor.style.left = f.cursor.xPct + "%";
+            cursor.style.top = f.cursor.yPct + "%";
+            cursor.style.transform = "translate(-8%, -8%) scale(" + (1 / fx.scale).toFixed(3) + ")";
+          } else {
+            cursor.style.display = "none";
+          }
+          beat.textContent = phase === "full" ? "overview" : phase === "zoom" ? "zoom in" : "action";
+        }
+        function ripple() {
+          var r = document.createElement("span");
+          r.className = "ripple";
+          cursor.appendChild(r);
+          setTimeout(function () { r.remove(); }, 500);
+        }
+        // Drive the 3 beats of the current slide, then advance.
+        function runBeats() {
+          clearBeats();
+          if (reduced || !playing) return;
+          applyPhase(); // beat 1: full
+          tFull = setTimeout(function () {
+            phase = "zoom"; applyPhase(); // beat 2: zoom in
+            tZoom = setTimeout(function () {
+              phase = "click"; applyPhase(); // beat 3: move + click
+              if (frames[i].cursor && frames[i].click) clickTimer = setTimeout(ripple, GLIDE);
+              tClick = setTimeout(function () {
+                if (i < frames.length - 1) { i++; phase = "full"; render(); }
+              }, BEAT_CLICK);
+            }, BEAT_ZOOM);
+          }, BEAT_FULL);
+        }
+        function render() {
+          var f = frames[i];
+          if (!f) return;
+          img.src = "./demo/" + f.image;
+          img.alt = f.caption;
+          cap.innerHTML = '<span class="count mono">' + (i + 1) + "/" + frames.length + "</span> " + f.caption;
+          for (var k = 0; k < dots.children.length; k++)
+            dots.children[k].className = "dot" + (k === i ? " on" : "");
+          prev.disabled = i === 0;
+          next.disabled = i === frames.length - 1;
+          runIt.style.display = i === frames.length - 1 ? "" : "none";
+          applyPhase();
+          runBeats();
+        }
+        function setPlaying(p) {
+          playing = p;
+          pp.textContent = p ? "⏸ Pause" : "▶ Play";
+          pp.setAttribute("aria-label", p ? "Pause" : "Play");
+          if (p) { phase = "full"; render(); } else { clearBeats(); }
+        }
+        function nav(n) { clearBeats(); i = n; phase = "full"; render(); }
+        pp.addEventListener("click", function () { setPlaying(!playing); });
+        prev.addEventListener("click", function () { if (i > 0) nav(i - 1); });
+        next.addEventListener("click", function () { if (i < frames.length - 1) nav(i + 1); });
+        restart.addEventListener("click", function () { i = 0; setPlaying(!reduced); if (reduced) render(); });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === " ") { e.preventDefault(); setPlaying(!playing); }
+          else if (e.key === "ArrowRight" && i < frames.length - 1) nav(i + 1);
+          else if (e.key === "ArrowLeft" && i > 0) nav(i - 1);
+        });
+
+        fetch("./demo/manifest.json")
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            frames = data;
+            for (var d = 0; d < frames.length; d++) {
+              var s = document.createElement("span");
+              s.className = "dot";
+              dots.appendChild(s);
+            }
+            if (reduced) setPlaying(false);
+            render();
+          })
+          .catch(function () {
+            cap.textContent = "The guided demo isn't available. See the repo to run DVAH locally.";
+          });
+      })();
+    </script>
+  </body>
+</html>

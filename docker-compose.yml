@@ -1,0 +1,60 @@
+# DVAH full stack. One command:
+#   docker compose up --build          → web UI (:3000) + lab API (:8000)
+#   docker compose --profile services up --build   → also the 4 mock services (:8001-8004)
+#
+# The lab UI uses the in-process native tool transport, so the mock services are only
+# needed for e2e/HTTP-parity and are therefore profile-gated to keep default startup lean.
+services:
+  webapi:
+    build:
+      context: .
+      dockerfile: webapi/Dockerfile
+    # Loopback-only publish: DVAH runs untrusted learner code and has no auth/rate-limiting,
+    # so the API must never be reachable off-host. (uvicorn binds 0.0.0.0 *inside* the
+    # container; only this host publish must be 127.0.0.1.)
+    ports: ["127.0.0.1:8000:8000"]
+    environment:
+      DVAH_RUNNER: subprocess          # container is the isolation boundary (no DinD)
+      DVAH_CORS_ORIGINS: http://localhost:3000
+      DVAH_RUN_CONCURRENCY: "2"
+      # DVAH_TUTOR: "1"                 # optional AI tutor; also needs a provider key
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/api/challenges').status==200 else 1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        # Inlined into the browser bundle at build time → host-published API URL.
+        NEXT_PUBLIC_API_BASE: http://localhost:8000
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      webapi:
+        condition: service_healthy
+
+  files:
+    profiles: ["services"]
+    build: {context: ., dockerfile: services/Dockerfile}
+    command: uvicorn services.files.app:app --host 0.0.0.0 --port 8000
+    ports: ["127.0.0.1:8001:8000"]
+  github:
+    profiles: ["services"]
+    build: {context: ., dockerfile: services/Dockerfile}
+    command: uvicorn services.github.app:app --host 0.0.0.0 --port 8000
+    ports: ["127.0.0.1:8002:8000"]
+  email:
+    profiles: ["services"]
+    build: {context: ., dockerfile: services/Dockerfile}
+    command: uvicorn services.email.app:app --host 0.0.0.0 --port 8000
+    ports: ["127.0.0.1:8003:8000"]
+  cloud:
+    profiles: ["services"]
+    build: {context: ., dockerfile: services/Dockerfile}
+    command: uvicorn services.cloud.app:app --host 0.0.0.0 --port 8000
+    ports: ["127.0.0.1:8004:8000"]

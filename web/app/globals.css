@@ -1,0 +1,124 @@
+@import "../styles/tokens.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+}
+
+* {
+  border-color: var(--border);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* high-signal state transition for invariant chips / streamed rows */
+.state-flip {
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: none; }
+}
+.row-in {
+  animation: row-in 140ms ease-out;
+}
+
+/* ── Landing marketing utilities — soft, de-boxed, restrained accent ─────── */
+/* Rounded panel that replaces the hard `border rounded bg-panel` boxes. */
+.soft-card {
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--panel) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.7);
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+.soft-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  box-shadow: 0 16px 40px -18px rgba(0, 0, 0, 0.8);
+}
+
+/* Soft radial accent glow behind the hero (decorative, low opacity). */
+.hero-glow {
+  position: relative;
+  isolation: isolate;
+}
+.hero-glow::before {
+  content: "";
+  position: absolute;
+  inset: -25% -10% auto -10%;
+  height: 480px;
+  z-index: -1;
+  background: radial-gradient(
+    55% 55% at 50% 30%,
+    color-mix(in srgb, var(--accent) 20%, transparent),
+    transparent 70%
+  );
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+/* Restrained accent gradient — used for the closing CTA band only. */
+.grad-band {
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--accent) 12%, var(--panel)),
+    color-mix(in srgb, var(--info) 9%, var(--panel-2))
+  );
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+}
+
+/* Pill-shaped chips for the stat strip. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 9999px;
+  padding: 0.4rem 0.9rem;
+  background: color-mix(in srgb, var(--panel) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+/* Gentle entrance for sections; disabled under prefers-reduced-motion below. */
+@keyframes reveal-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.reveal {
+  animation: reveal-in 460ms ease-out both;
+}
+
+/* Respect users who prefer reduced motion (WCAG 2.3.3 / 2.2 motion). */
+@media (prefers-reduced-motion: reduce) {
+  .state-flip {
+    transition: none;
+  }
+  .row-in {
+    animation: none;
+  }
+  .reveal {
+    animation: none;
+  }
+  .soft-card {
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

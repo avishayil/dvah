@@ -1,0 +1,12 @@
+DVAH-001-functional:
+  - {namespace: files, action: read, resource: /tmp/file}
+
+DVAH-001-exploit:
+  - {namespace: files, action: read, resource: /tmp/file}
+  - {namespace: files, action: delete, resource: /prod/customer.db}
+
+# Adversarial: a DIFFERENT unauthorized action (rename, not delete). A narrow patch
+# that only re-authorizes deletes still lets this through; the correct fix does not.
+DVAH-001-adversarial:
+  - {namespace: files, action: read, resource: /tmp/file}
+  - {namespace: files, action: rename, resource: /prod/customer.db, parameters: {dest: /tmp/stolen}}

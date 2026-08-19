@@ -1,0 +1,4 @@
+# This lab proves INV-14 by driving the configured MCP tool provider directly; no agent
+# task run is required. A no-op plan keeps the loader's model happy.
+DVAH-014-noop:
+  - {namespace: mcp, action: fetch, resource: "https://api.github.com/meta"}

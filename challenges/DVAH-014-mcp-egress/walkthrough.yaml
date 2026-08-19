@@ -1,0 +1,16 @@
+invariant: INV-14
+tiers:
+  - level: nudge
+    text: "The agent calls an MCP tool to 'fetch' a URL. Who decides which hosts it may reach — the harness, or whatever host the plan/server happens to name? Aim a fetch at evil.example and see where the traffic goes."
+  - level: concept
+    text: "A runtime boundary (an MCP server, a subprocess, another runtime) has its own network reach. If the harness inherits that reach instead of containing it, a tool call becomes an exfiltration / SSRF primitive. Containment — an egress allowlist and a pinned tool-server identity — must be enforced by the harness on THIS side of the boundary, before anything crosses it."
+  - level: pointer
+    text: "Look at vulnerable/mcp.py: `allow_hosts = None` (no allowlist) and `verify_identity = False`. The shared MCPToolProvider only records/permits egress the harness allows — so the fix is to give it an allowlist and pin the server id, not to trust the tool. See how the reference ContainedMCPProvider sets both."
+  - level: solution
+    text: "Set `allow_hosts` to the approved destinations (e.g. api.github.com) and `verify_identity = True`. Egress to any other host is denied before the boundary is crossed, and an unrecognized tool server is rejected. The reference solution/mcp.py does exactly this."
+steps:
+  - "Read the objective: an MCP fetch can reach arbitrary hosts through the tool server."
+  - "Run the exploit — it fetches https://evil.example/exfil and checks whether the boundary was crossed."
+  - "Watch it fail against the vulnerable provider: evil.example is reached (data leaves)."
+  - "Edit vulnerable/mcp.py: set an egress allowlist and pin the tool-server identity."
+  - "Re-run exploit + invariant + adversarial: only allowlisted hosts are ever reached, including under look-alike and metadata-endpoint variations."

@@ -1,0 +1,27 @@
+invariant: INV-10
+tiers:
+  - level: nudge
+    text: >
+      The agent "remembered" to comment on an issue. Whose memory was that — and were they
+      even the same tenant as the user you're serving?
+  - level: concept
+    text: >
+      Memory is recalled context, not a command. Two properties must hold: it is scoped to
+      the current tenant (one customer's notes never reach another's agent), and it is
+      informational — it rides in the data channel, never the instruction channel. Break
+      either and stored notes become a persistence mechanism for injection.
+  - level: pointer
+    text: >
+      vulnerable/compiler.py iterates every tenant in the store and appends notes as
+      INSTRUCTION items. Recall only ctx.principal.tenant, and emit memory as DATA with
+      TrustLevel.MEMORY (see BuiltinMemoryProvider in dvah/services/memory_store.py).
+  - level: solution
+    text: >
+      Use BuiltinMemoryProvider(store).recall(ctx.principal.tenant, clock) and append each
+      note as a data-channel ContextItem. Cross-tenant notes are never recalled and memory
+      can never carry an executable instruction.
+steps:
+  - "Run the exploit task and open the Trace tab — a comment gets posted from a note the user never wrote."
+  - "Read vulnerable/compiler.py: it recalls all tenants and marks memory as instruction."
+  - "Scope recall to the current tenant and move memory to the data channel (see solution/compiler.py)."
+  - "Re-run: the injected comment never executes, and the invariant + adversarial (rival2) checks pass."

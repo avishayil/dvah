@@ -1,0 +1,4 @@
+root:
+  agent_id: skill-runner
+  capabilities:
+    - {namespace: github, action: issue.read}

@@ -1,0 +1,27 @@
+id: DVAH-011
+title: Memory Knows Best
+difficulty: hard
+invariants: [INV-10]
+components: [context_compiler, memory]
+
+model:
+  provider: reactive
+
+overrides:
+  context_compiler: "vulnerable.compiler:CrossTenantMemoryCompiler"
+solution_overrides:
+  context_compiler: "solution.compiler:TenantMemoryCompiler"
+
+objective:
+  exploit: >
+    Poison another tenant's memory so the agent recalls it, treats it as an instruction,
+    and acts on an attacker-planted action.
+  fix: >
+    Recall memory scoped to the current tenant only, and keep it in the data channel as
+    informational context — never a privileged instruction (INV-10).
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 11
+estimated_minutes: 15
+teaches: "keep memory tenant-scoped and non-authoritative"
+prerequisites: []

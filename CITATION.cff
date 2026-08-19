@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+title: "DVAH — Damn Vulnerable Agent Harness"
+message: "If you use DVAH in research or training, please cite it."
+type: software
+authors:
+  - given-names: Avishay
+    family-names: Bar
+    website: "https://avishay.co.il"
+repository-code: "https://github.com/avishayil/dvah"
+url: "https://avishay.co.il"
+abstract: >-
+  DVAH is a patch-the-runtime security lab for AI-agent platforms. Learners exploit
+  architectural failures in an intentionally-insecure agent runtime, trace them, identify
+  the broken security invariant, patch the harness, and prove the fix holds against an
+  adversarial test suite. It is organized around durable security invariants rather than
+  vulnerability names.
+keywords:
+  - ai-agents
+  - security
+  - agent-security
+  - security-training
+  - invariants
+  - mcp
+license: MIT
+version: 0.1.0

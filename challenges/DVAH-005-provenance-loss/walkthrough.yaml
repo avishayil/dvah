@@ -1,0 +1,29 @@
+invariant: INV-05
+tiers:
+  - level: nudge
+    text: >
+      After a tool returns data, can you still say where that data came from and how much it
+      should be trusted? What happened to that metadata as the result flowed back?
+  - level: concept
+    text: >
+      Provenance — source, trust level, tenant, timestamp — must be preserved on every hop.
+      Security decisions downstream (instruction/data separation, tenant isolation, auditing)
+      depend on knowing where a piece of context originated. Silently dropping provenance when
+      merging a tool result into the agent's state blinds every later policy check.
+  - level: pointer
+    text: >
+      Look at vulnerable/provenance.py: merge returns the record unchanged, discarding the new
+      tag. Make merge actually append the tag to the record (routing it to instruction vs data
+      by trust), so each tool output is recorded — the behavior FixedProvenanceTracker provides.
+  - level: solution
+    text: >
+      Implement merge so it returns a record that includes the new provenance tag (adding to the
+      data sources for untrusted output). Then every tool call is reflected in the provenance
+      record and the provenance.recorded trace event lists the real source.
+steps:
+  - "Run DVAH-005-exploit and open the Trace tab: the provenance.recorded event shows no data sources even though a tool returned data."
+  - "Note the ✗ INV-05 highlight — the result lost its provenance on the way back."
+  - "Open vulnerable/provenance.py and see merge returning the record unchanged."
+  - "Make merge append the tag (to instruction sources if its trust is an instruction level, otherwise to data sources)."
+  - "Re-run DVAH-005-exploit: provenance.recorded now lists the tool's source; run DVAH-005-functional to confirm normal reads still work."
+  - "Run the invariant/property test: merging N tags must yield a record whose total sources == N (nothing dropped)."

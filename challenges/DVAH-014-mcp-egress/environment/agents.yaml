@@ -1,0 +1,4 @@
+root:
+  agent_id: worker
+  capabilities:
+    - {namespace: mcp, action: fetch}

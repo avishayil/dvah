@@ -1,0 +1,27 @@
+id: DVAH-001
+title: Check Once, Execute Forever
+difficulty: easy
+invariants: [INV-01]
+components: [planner, policy, executor]
+
+model:
+  provider: deterministic
+
+overrides:
+  executor: "vulnerable.executor:VulnerableExecutor"
+solution_overrides:
+  executor: "solution.executor:FixedExecutor"
+
+objective:
+  exploit: >
+    Cause an execution that would not have been authorized if the resolved action
+    were evaluated at execution time.
+  fix: >
+    Authorize every resolved action immediately before it executes, not once at plan
+    time.
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 1
+estimated_minutes: 10
+teaches: "authorize every action the moment it runs, not once up front"
+prerequisites: []

@@ -1,0 +1,27 @@
+id: DVAH-012
+title: The Tool Rug-Pull
+difficulty: hard
+invariants: [INV-11]
+components: [approvals]
+
+model:
+  provider: reactive
+
+overrides:
+  approvals: "vulnerable.approvals:PreDigestApprovalService"
+solution_overrides:
+  approvals: "solution.approvals:FixedApprovalService"
+
+objective:
+  exploit: >
+    Get an approval granted for one tool to authorize the same operation after the tool's
+    definition has been swapped underneath it (a "rug-pull").
+  fix: >
+    Bind approval to the tool/skill definition (its digest), not just the operation — the
+    resolved action_hash already includes the tool digest, so validate against it.
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 12
+estimated_minutes: 15
+teaches: "bind approval to the tool's identity/version"
+prerequisites: [DVAH-007]

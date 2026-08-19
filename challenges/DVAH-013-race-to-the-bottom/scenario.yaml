@@ -1,0 +1,27 @@
+id: DVAH-013
+title: Race to the Bottom
+difficulty: hard
+invariants: [INV-12]
+components: [budget, scheduler]
+
+model:
+  provider: reactive
+
+overrides:
+  budget: "vulnerable.budget:RacyBudgetTracker"
+solution_overrides:
+  budget: "solution.budget:AtomicBudgetTracker"
+
+objective:
+  exploit: >
+    Use two concurrent agents to both pass a shared budget check and slip an extra action
+    past a limit that should only permit one.
+  fix: >
+    Make the security decision atomic — check and commit the shared limit in one
+    indivisible step so no interleaving can bypass it.
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 13
+estimated_minutes: 20
+teaches: "make security checks atomic so races can't bypass limits"
+prerequisites: [DVAH-006]

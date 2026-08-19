@@ -1,0 +1,16 @@
+invariant: INV-11
+tiers:
+  - level: nudge
+    text: "You approved an action performed by a specific tool. If someone swaps the tool's code but keeps the operation name, does your approval still say yes?"
+  - level: concept
+    text: "Approval must bind to WHAT will run, not just the operation label. The tool/skill definition (its digest) is part of the resolved action — a different definition is a different action, even for the same op and params. This is the MCP 'tool rug-pull' / tool-poisoning threat."
+  - level: pointer
+    text: "Look at vulnerable/approvals.py: its binding key hashes actor+operation+resource+params+delegation+tenant but omits the tool digest. The resolved ActionEnvelope.action_hash already includes runtime.skill.digest / runtime.mcp_server.digest — bind to that."
+  - level: solution
+    text: "Bind and validate approvals against the full action_hash (which includes the tool/skill digest). The reference FixedApprovalService simply uses the built-in digest-bound service, so a grant for tool D1 no longer validates the same op under tool D2."
+steps:
+  - "Read the objective and open the Trace / envelope: note that the action carries a tool/skill digest."
+  - "Run the exploit task — it constructs a grant for tool D1 and checks whether it validates the same operation under tool D2."
+  - "See it fail against the vulnerable service (the rug-pull is accepted)."
+  - "Edit vulnerable/approvals.py to bind approval to the resolved action_hash (which includes the tool digest)."
+  - "Re-run exploit + invariant + adversarial: a grant now validates only its exact tool definition."

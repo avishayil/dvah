@@ -1,0 +1,25 @@
+id: DVAH-005
+title: Who Told You That?
+difficulty: medium
+invariants: [INV-05]
+components: [provenance]
+
+model:
+  provider: reactive
+
+overrides:
+  provenance: "vulnerable.provenance:VulnerableProvenanceTracker"
+solution_overrides:
+  provenance: "solution.provenance:FixedProvenanceTracker"
+
+objective:
+  exploit: >
+    Cause a tool result to lose its provenance as it flows back into the agent.
+  fix: >
+    Preserve provenance (source/trust/tenant/timestamp) across every hop.
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 5
+estimated_minutes: 10
+teaches: "track where every piece of data came from"
+prerequisites: []

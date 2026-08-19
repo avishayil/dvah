@@ -1,0 +1,31 @@
+invariant: INV-06
+tiers:
+  - level: nudge
+    text: >
+      The global budget is max_actions: 3, yet the delegation chain runs six actions. Each
+      subagent seems to start with a full budget again — where is that budget counted?
+  - level: concept
+    text: >
+      A resource budget must be shared across the entire delegation tree, not minted fresh for
+      every subagent. If each child gets its own allowance, an agent can bypass any cap simply by
+      fanning work out through delegation — unbounded consumption. One counter must span root,
+      children, and grandchildren.
+  - level: pointer
+    text: >
+      Look at vulnerable/budget.py: charge(ctx) checks ctx.actions_used against
+      ctx.constraints.max_actions, and delegation resets actions_used per agent — so the cap is
+      per-agent. Enforce a single shared counter across the whole run instead, the behavior
+      FixedBudgetTracker provides (one limit, decremented on every charge, raising INV-06 when hit).
+  - level: solution
+    text: >
+      Track budget in the tracker itself (a shared decrementing counter constructed with the
+      global limit), independent of per-agent ctx state. charge() increments a shared _used and
+      raises Denied(INV-06) once the global limit is reached. Now the 4th action anywhere in the
+      tree is denied.
+steps:
+  - "Run DVAH-006-exploit and open the Trace tab: six executed actions across root → child → grandchild, none denied, despite max_actions: 3."
+  - "Note the ✗ INV-06 (budget) highlight — delegation minted fresh budget."
+  - "Open vulnerable/budget.py and see charge(ctx) reading ctx.actions_used (per-agent), which resets on delegation."
+  - "Switch to a shared counter in the tracker: increment on each charge and raise Denied(INV-06) when it reaches the global limit."
+  - "Re-run DVAH-006-exploit: the run is denied once 3 total actions are used; run DVAH-006-functional to confirm a within-budget task still completes."
+  - "Run the invariant test: a tracker with limit k must allow exactly k charges then raise."

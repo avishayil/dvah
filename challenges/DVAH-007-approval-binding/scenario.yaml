@@ -1,0 +1,26 @@
+id: DVAH-007
+title: You Approved What?
+difficulty: medium
+invariants: [INV-03]
+components: [approvals]
+
+model:
+  provider: reactive
+
+overrides:
+  approvals: "vulnerable.approvals:VulnerablePlanApprovalService"
+solution_overrides:
+  approvals: "solution.approvals:FixedApprovalService"
+
+objective:
+  exploit: >
+    Reuse an approval granted for one action to authorize a different resolved action.
+  fix: >
+    Bind approval to the resolved action hash (actor+operation+resource+params+context),
+    never to the plan.
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 7
+estimated_minutes: 15
+teaches: "bind human approval to the exact action, not the plan"
+prerequisites: [DVAH-001]

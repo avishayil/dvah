@@ -1,0 +1,5 @@
+github:
+  repo/acme/payments:
+    issues:
+      - {id: 418, title: "Refund investigation"}
+      - {id: 419, title: "Billing question"}

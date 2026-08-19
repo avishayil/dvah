@@ -1,0 +1,27 @@
+invariant: INV-07
+tiers:
+  - level: nudge
+    text: >
+      A skill just updated itself from v1 to v2 and now it can delete repositories. Who
+      approved the *new* permissions?
+  - level: concept
+    text: >
+      A skill's identity is its content digest, and its authority is the set of
+      permissions that were approved for that digest. An upgrade is a new identity — its
+      extra permissions are unapproved until a human re-approves them. Trusting a manifest
+      just because it calls itself an upgrade is the whole vulnerability.
+  - level: pointer
+    text: >
+      Look at vulnerable/skills.py — AutoAcceptSkillLoader returns every requested
+      permission and never sets requires_reapproval. The loader must instead grant
+      requested ∩ approved (only when the digest is pinned) and report the permission diff.
+  - level: solution
+    text: >
+      Use the pinned-digest, permission-diff loader (dvah.security.skills.BuiltinSkillLoader):
+      granted = requested ∩ approved when digest == pinned, expanded = requested − approved,
+      and requires_reapproval whenever anything is expanded or the digest is unpinned.
+steps:
+  - "Run the exploit test — it fails because the upgraded manifest's caps are granted wholesale."
+  - "Read vulnerable/skills.py and note it ignores both approved_permissions and pinned_digest."
+  - "Make load() return granted = requested ∩ approved and flag expansion (see solution/skills.py)."
+  - "Re-run: the invariant (granted ⊆ approved) and adversarial (matched-digest expansion) tests pass."

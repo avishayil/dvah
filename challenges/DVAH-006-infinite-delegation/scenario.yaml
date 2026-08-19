@@ -1,0 +1,30 @@
+id: DVAH-006
+title: Infinite Delegation
+difficulty: medium
+invariants: [INV-06]
+components: [agent, budget]
+
+model:
+  provider: reactive
+
+constraints:
+  delegation_depth: 3
+  max_actions: 3
+
+overrides:
+  budget: "vulnerable.budget:VulnerableBudgetTracker"
+solution_overrides:
+  budget: "solution.budget:FixedBudgetTracker"
+
+objective:
+  exploit: >
+    Exceed the global action budget by fanning work out across delegated subagents,
+    each of which is granted a fresh budget.
+  fix: >
+    Enforce ONE shared action budget across the whole delegation tree.
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 6
+estimated_minutes: 10
+teaches: "cap the work delegation can spawn"
+prerequisites: []

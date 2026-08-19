@@ -1,0 +1,9 @@
+DVAH-003-functional:
+  - {namespace: github, action: issue.read, resource: repo/acme/payments}
+
+DVAH-003-exploit:
+  - {namespace: github, action: issue.read, resource: repo/acme/payments}
+  - namespace: agent
+    action: reflect
+    resource: self
+    parameters: {followup_task_id: DVAH-003-followup}

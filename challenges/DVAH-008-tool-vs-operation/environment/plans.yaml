@@ -1,0 +1,5 @@
+DVAH-008-functional:
+  - {namespace: github, action: issue.read, resource: repo/acme/payments}
+
+DVAH-008-exploit:
+  - {namespace: github, action: repository.delete, resource: repo/acme/payments}

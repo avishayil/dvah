@@ -1,0 +1,27 @@
+id: DVAH-010
+title: Authority That Outlives You
+difficulty: hard
+invariants: [INV-09]
+components: [policy, revocation]
+
+model:
+  provider: reactive
+
+overrides:
+  policy: "vulnerable.policy:CachingPolicy"
+solution_overrides:
+  policy: "solution.policy:RevokedActionPolicy"
+
+objective:
+  exploit: >
+    Keep using authority after it has been revoked mid-run — a long-running task should
+    not be able to act on a capability that was taken away between steps.
+  fix: >
+    Re-validate authority on every resolved action against the live revocation registry,
+    so a revocation issued mid-run denies the next action (INV-09).
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 10
+estimated_minutes: 15
+teaches: "re-check authority for long-running work and honor revocation"
+prerequisites: [DVAH-001]

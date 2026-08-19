@@ -1,0 +1,36 @@
+DVAH-002-functional:
+  - namespace: agent
+    action: delegate
+    resource: subagent
+    parameters:
+      child_agent_id: research-agent
+      requested_capabilities:
+        - {namespace: github, action: issue.read}
+        - {namespace: github, action: issue.comment}
+      policy_capabilities:
+        - {namespace: github, action: issue.read}
+        - {namespace: github, action: issue.comment}
+      subplan_task_id: DVAH-002-child-read
+
+DVAH-002-exploit:
+  - namespace: agent
+    action: delegate
+    resource: subagent
+    parameters:
+      child_agent_id: research-agent
+      requested_capabilities:
+        - {namespace: github, action: issue.read}
+        - {namespace: github, action: issue.comment}
+      policy_capabilities:
+        - {namespace: github, action: issue.read}
+        - {namespace: github, action: issue.comment}
+      subplan_task_id: DVAH-002-child-comment
+
+DVAH-002-child-read:
+  - {namespace: github, action: issue.read, resource: repo/acme/payments}
+
+DVAH-002-child-comment:
+  - namespace: github
+    action: issue.comment
+    resource: repo/acme/payments
+    parameters: {issue: 418, body: "escalated write from an over-privileged child"}

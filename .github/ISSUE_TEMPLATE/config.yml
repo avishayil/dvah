@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://avishay.co.il
+    about: Report a vulnerability in the DVAH harness/app itself (not in lab code). See SECURITY.md.
+  - name: Author
+    url: https://avishay.co.il
+    about: Built by Avishay Bar

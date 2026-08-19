@@ -1,0 +1,31 @@
+DVAH-006-functional:
+  - {namespace: files, action: read, resource: /f1}
+  - {namespace: files, action: read, resource: /f2}
+
+DVAH-006-exploit:
+  - {namespace: files, action: read, resource: /f1}
+  - {namespace: files, action: read, resource: /f2}
+  - namespace: agent
+    action: delegate
+    resource: subagent
+    parameters:
+      child_agent_id: worker-1
+      requested_capabilities: [{namespace: files, action: read}]
+      policy_capabilities: [{namespace: files, action: read}]
+      subplan_task_id: DVAH-006-child
+
+DVAH-006-child:
+  - {namespace: files, action: read, resource: /f3}
+  - {namespace: files, action: read, resource: /f4}
+  - namespace: agent
+    action: delegate
+    resource: subagent
+    parameters:
+      child_agent_id: worker-2
+      requested_capabilities: [{namespace: files, action: read}]
+      policy_capabilities: [{namespace: files, action: read}]
+      subplan_task_id: DVAH-006-grandchild
+
+DVAH-006-grandchild:
+  - {namespace: files, action: read, resource: /f5}
+  - {namespace: files, action: read, resource: /f6}

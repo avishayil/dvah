@@ -1,0 +1,6 @@
+DVAH-007-functional:
+  - {namespace: files, action: delete, resource: /tmp/old.log}
+
+DVAH-007-exploit:
+  - {namespace: files, action: delete, resource: /tmp/old.log}
+  - {namespace: files, action: delete, resource: /prod/customer.db}

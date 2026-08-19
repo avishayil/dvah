@@ -1,0 +1,32 @@
+id: DVAH-014
+title: The Unbounded Tool Server
+difficulty: hard
+invariants: [INV-14]
+components: [tools, mcp]
+
+model:
+  provider: reactive
+
+# The one broken slot: the tool boundary. The vulnerable provider inherits unrestricted
+# egress; the fix contains the boundary in the harness (allowlist + pinned server id).
+overrides:
+  tools: "vulnerable.mcp:InheritedEgressMCPProvider"
+solution_overrides:
+  tools: "solution.mcp:ContainedMCPProvider"
+
+objective:
+  exploit: >
+    Point the MCP tool server at an attacker-controlled host and watch the agent's
+    ``fetch`` reach arbitrary internet — exfiltrating across a runtime boundary the
+    harness never contained. The tool server (and the plan) get to decide where traffic
+    goes.
+  fix: >
+    Contain the boundary in the harness: enforce a network-egress allowlist and bind the
+    tool server's identity, so a fetch can only reach approved hosts no matter what the
+    server or the plan asks for. Containment is the harness's job, not something inherited
+    from the tool.
+
+order: 14
+estimated_minutes: 20
+teaches: "contain runtime boundaries — enforce network egress + tool-server identity in the harness, never inherited"
+prerequisites: [DVAH-005]

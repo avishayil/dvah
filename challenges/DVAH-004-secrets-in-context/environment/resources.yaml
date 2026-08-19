@@ -1,0 +1,5 @@
+files:
+  /tmp/note: "just a harmless note"
+  /etc/creds: "AKIA-SECRET-123"
+secrets:
+  aws: "AKIA-SECRET-123"

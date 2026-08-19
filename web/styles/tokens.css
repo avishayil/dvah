@@ -1,0 +1,20 @@
+/* DVAH design tokens — dark-first, IDE/terminal aesthetic, restrained semantic hues. */
+:root {
+  --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, monospace;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* chrome */
+  --bg: #0b0e14;
+  --panel: #11151d;
+  --panel-2: #161b25;
+  --border: #232a36;
+  --fg: #d6dde8;
+  --muted: #949cb0; /* raised from #7c869a to clear WCAG-AA (4.5:1) for small text on panels */
+
+  /* semantic */
+  --allow: #3fb950;  /* holds / allow */
+  --deny: #f85149;   /* violation / deny */
+  --warn: #d29922;   /* needs-approval / warn */
+  --info: #58a6ff;   /* info */
+  --accent: #39c5cf; /* cyan accent */
+}

@@ -1,0 +1,3 @@
+# This lab proves INV-11 over constructed envelopes (like DVAH-007); no task run needed.
+DVAH-012-noop:
+  - {namespace: github, action: issue.read, resource: repo/acme/payments}

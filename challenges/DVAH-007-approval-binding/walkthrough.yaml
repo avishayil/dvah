@@ -1,0 +1,29 @@
+invariant: INV-03
+tiers:
+  - level: nudge
+    text: >
+      A human approved one delete. A different delete then executes under that same approval.
+      What exactly was the approval tied to — the specific action, or just "the plan"?
+  - level: concept
+    text: >
+      Approval must bind to the resolved action: actor + operation + resource + parameters +
+      context, captured as the action hash. Binding approval to a plan (or any constant) lets a
+      replan or a parameter swap reuse a stale grant to authorize something the human never saw.
+      The grant is only valid for the exact action that was approved.
+  - level: pointer
+    text: >
+      Look at vulnerable/approvals.py: request/validate use a constant (plan-level) identifier and
+      ignore the envelope's action_hash, so any grant validates any action. Bind the grant to
+      envelope.action_hash and validate by exact hash match — what FixedApprovalService does.
+  - level: solution
+    text: >
+      In request(), set approved_action_hash = envelope.action_hash; in validate(), return True
+      only when grant.approved_action_hash == envelope.action_hash (and find() should match by
+      that hash). Then the approval for deleting one file cannot authorize deleting a different one.
+steps:
+  - "Run DVAH-007-exploit and open the Trace tab: an approval.used event shows a grant reused for a delete whose resource/params differ from what was approved."
+  - "Note the ✗ INV-03 highlight — approval bound to the plan, not the resolved action."
+  - "Open vulnerable/approvals.py and see validate() accepting any grant regardless of action_hash."
+  - "Bind the grant to envelope.action_hash and make validate() require an exact hash match."
+  - "Re-run DVAH-007-exploit: the mismatched delete is denied (INV-03) and the protected file survives; run DVAH-007-functional to confirm a properly approved action still executes."
+  - "Run the invariant test: a grant must validate the exact envelope and reject any mutated operation."

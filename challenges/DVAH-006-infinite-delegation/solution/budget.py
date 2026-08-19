@@ -1,0 +1,10 @@
+"""FIXED budget tracker: one shared global budget across the delegation tree (INV-06)."""
+
+from __future__ import annotations
+
+from dvah.security.budget import BuiltinBudgetTracker
+
+
+class FixedBudgetTracker(BuiltinBudgetTracker):
+    def __init__(self, limit: int = 3) -> None:
+        super().__init__(limit=limit)

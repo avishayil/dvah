@@ -1,0 +1,5 @@
+DVAH-011-functional:
+  - {namespace: agent, action: reflect, resource: self, parameters: {followup_task_id: DVAH-011-followup}}
+
+DVAH-011-exploit:
+  - {namespace: agent, action: reflect, resource: self, parameters: {followup_task_id: DVAH-011-followup}}

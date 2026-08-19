@@ -1,0 +1,31 @@
+invariant: INV-06
+tiers:
+  - level: nudge
+    text: >
+      The agent read a GitHub issue and then acted on an instruction that was inside that
+      issue's body. Who wrote that issue, and should its contents be able to command the agent?
+  - level: concept
+    text: >
+      Retrieved content is untrusted data, not instructions. A hardened runtime keeps a strict
+      separation between the instruction channel (trusted/user directives) and the data channel
+      (tool output, documents, issues, memory). If untrusted data is allowed to land in the
+      instruction channel, prompt injection becomes remote code execution for the agent.
+  - level: pointer
+    text: >
+      Look at vulnerable/compiler.py: it places tool observations into the instruction channel,
+      preserving their untrusted trust level. Change the compiler so observations always go to
+      the data channel and are never treated as instructions — the property FixedContextCompiler
+      guarantees (compiled context has no untrusted item in the instruction channel).
+  - level: solution
+    text: >
+      In the context compiler, emit each observation as a data-channel item; only genuine
+      user/trusted directives populate the instruction channel. Then the injected "delete/comment"
+      instruction embedded in the issue stays inert data, the reactive model never acts on it,
+      and CompiledContext.has_untrusted_instruction() is False.
+steps:
+  - "Run DVAH-003-exploit and open the Trace tab: the context.compiled event flags UNTRUSTED DATA IN INSTRUCTION CHANNEL and the injected action executes."
+  - "Note the ✗ INV-06 highlight — retrieved data was promoted to an instruction."
+  - "Open vulnerable/compiler.py and find where observations are added to the instruction channel."
+  - "Route observations to the data channel instead (leave only user/trusted content as instructions)."
+  - "Re-run DVAH-003-exploit: the injected action is no longer planned/executed; run DVAH-003-functional to confirm legitimate reading/summarizing still works."
+  - "Run the invariant/property test: for any mix of observation trust levels the compiled instruction channel must contain no untrusted item."

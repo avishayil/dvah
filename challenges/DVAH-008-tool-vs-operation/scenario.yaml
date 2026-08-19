@@ -1,0 +1,26 @@
+id: DVAH-008
+title: Same Tool, Different Operation
+difficulty: medium
+invariants: [INV-13]
+components: [policy]
+
+model:
+  provider: reactive
+
+overrides:
+  policy: "vulnerable.policy:ToolNamePolicy"
+solution_overrides:
+  policy: "solution.policy:FixedPolicy"
+
+objective:
+  exploit: >
+    Perform a dangerous operation because the agent is allowed to use the tool at all.
+  fix: >
+    Authorize the specific (principal, operation, resource, parameters, context) — not
+    the bare tool name.
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 8
+estimated_minutes: 10
+teaches: "authorize the specific operation, not the whole tool"
+prerequisites: [DVAH-002]

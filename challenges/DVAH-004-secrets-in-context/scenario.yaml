@@ -1,0 +1,26 @@
+id: DVAH-004
+title: Context Full of Secrets
+difficulty: medium
+invariants: [INV-04]
+components: [secrets, context_compiler]
+
+model:
+  provider: reactive
+
+overrides:
+  secrets: "vulnerable.secrets:VulnerableSecretBroker"
+solution_overrides:
+  secrets: "solution.secrets:FixedSecretBroker"
+
+objective:
+  exploit: >
+    Get a credential to appear in the model's context.
+  fix: >
+    Keep credentials out of the model context entirely; redact any secret value before
+    the model sees it. Credentials attach only at the tool layer.
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 4
+estimated_minutes: 10
+teaches: "keep credentials out of the model's context"
+prerequisites: []

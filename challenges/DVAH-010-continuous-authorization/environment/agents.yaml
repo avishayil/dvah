@@ -1,0 +1,5 @@
+root:
+  agent_id: task-runner
+  capabilities:
+    - {namespace: files, action: read}
+    - {namespace: files, action: delete}

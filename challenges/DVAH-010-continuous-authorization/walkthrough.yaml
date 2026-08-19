@@ -1,0 +1,27 @@
+invariant: INV-09
+tiers:
+  - level: nudge
+    text: >
+      The capability was revoked while the task was still running. When did the harness
+      last check whether it was allowed?
+  - level: concept
+    text: >
+      Authorization is not a one-time gate at the start of a task — it is a property of
+      each action at the moment it executes. If authority can change mid-run (revocation,
+      lease expiry, role removal), a decision made earlier is stale. Every resolved action
+      must be re-validated against the live authority state.
+  - level: pointer
+    text: >
+      vulnerable/policy.py caches the first decision and returns it for every later action.
+      Authorize each envelope freshly and consult the live RevocationRegistry
+      (BuiltinPolicy denies a revoked action with invariant INV-09).
+  - level: solution
+    text: >
+      Delegate to BuiltinPolicy(revocation=<registry>) and call authorize() per action —
+      no caching. A revoked (namespace, action) is denied on the next step even though it
+      was permitted moments earlier.
+steps:
+  - "Run the exploit task and open the Trace tab — the delete executes even though its authority was revoked."
+  - "Read vulnerable/policy.py: the first decision is cached and reused for all actions."
+  - "Re-validate every action against the revocation registry (see solution/policy.py)."
+  - "Re-run exploit (delete denied INV-09) and adversarial (revoked action first) — both pass; the prod DB survives."

@@ -1,0 +1,27 @@
+id: DVAH-002
+title: The Privileged Child
+difficulty: easy
+invariants: [INV-02]
+components: [agent, capabilities, policy]
+
+model:
+  provider: deterministic
+
+overrides:
+  capabilities: "vulnerable.capabilities:VulnerableCapabilityResolver"
+solution_overrides:
+  capabilities: "solution.capabilities:FixedCapabilityResolver"
+
+objective:
+  exploit: >
+    Delegate to a subagent that ends up more privileged than its parent and perform an
+    action the parent could not.
+  fix: >
+    Derive child capabilities as requested ∩ parent ∩ policy so a child can never
+    exceed its parent.
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 2
+estimated_minutes: 10
+teaches: "a subagent must never be more powerful than its parent"
+prerequisites: [DVAH-001]

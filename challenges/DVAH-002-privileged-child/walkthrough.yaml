@@ -1,0 +1,29 @@
+invariant: INV-02
+tiers:
+  - level: nudge
+    text: >
+      The parent (investigator) holds only github:issue.read. After delegation the child
+      posts a comment. Where did the child's authority to comment come from?
+  - level: concept
+    text: >
+      Delegation must attenuate, never amplify. A subagent's capabilities can only ever be a
+      subset of what its parent already holds — formally child = requested ∩ parent ∩ policy.
+      Handing a child the full policy/tool profile lets it become more privileged than the
+      agent that spawned it, which breaks the delegation trust boundary.
+  - level: pointer
+    text: >
+      Look at vulnerable/capabilities.py: derive_child ignores parent and requested and simply
+      returns the policy profile. Change it so the returned set is the intersection of
+      requested, parent, and policy — the property the FixedCapabilityResolver enforces.
+  - level: solution
+    text: >
+      Implement derive_child as requested.intersect(parent).intersect(policy). Then the child
+      of an issue.read-only parent can at most read; its attempt to comment is denied at the
+      broker because the attenuated capability set does not cover github.issue.comment.
+steps:
+  - "Run DVAH-002-exploit and open the Trace tab: the delegate event shows the child receiving caps beyond its parent, and the child's comment is allowed."
+  - "Note the ✗ INV-02 highlight (and the resulting unauthorized write it enables)."
+  - "Open vulnerable/capabilities.py and see that derive_child returns `policy`, ignoring parent/requested."
+  - "Return requested.intersect(parent).intersect(policy) instead."
+  - "Re-run DVAH-002-exploit: the child now holds only issue.read, so its comment is denied; run DVAH-002-functional to confirm the in-scope read still works."
+  - "Run the invariant/property and adversarial tests — attenuation must hold for any parent/requested/policy combination, not just this one."

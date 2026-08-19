@@ -1,0 +1,4 @@
+# This lab proves INV-12 by driving the configured budget tracker through the
+# deterministic InterleavingScheduler; no agent task run is required.
+DVAH-013-noop:
+  - {namespace: files, action: read, resource: /tmp/scratch}

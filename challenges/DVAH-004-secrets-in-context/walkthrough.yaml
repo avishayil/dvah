@@ -1,0 +1,31 @@
+invariant: INV-04
+tiers:
+  - level: nudge
+    text: >
+      A credential ends up visible in the model's context. Does the model ever actually need to
+      see the secret value to get its work done?
+  - level: concept
+    text: >
+      Credentials must never enter the model context. Secrets are attached at the tool layer,
+      immediately before a call leaves the runtime — the model reasons about *what* to do, not
+      with *which key*. Any secret value that reaches the context can be exfiltrated by a later
+      (possibly injected) instruction, so it must be redacted before the model sees anything.
+  - level: pointer
+    text: >
+      Look at vulnerable/secrets.py: redact_for_model is effectively a no-op, so secret values
+      pass straight into the compiled context. Make redact_for_model strip every known secret
+      value (including nested ones) from the context — the property FixedSecretBroker enforces —
+      while resolve() still supplies the credential only at the tool layer.
+  - level: solution
+    text: >
+      Implement redact_for_model so it removes/masks any value equal to a known credential
+      wherever it appears in the context items (top level and nested). Keep resolve() handing
+      the credential to the tool layer only (never into the operation). Then the secret read
+      from /etc/creds never appears in the model context.
+steps:
+  - "Run DVAH-004-exploit: the ops-agent reads a file containing a credential and it flows into the model context."
+  - "Inspect the compiled model context (Trace/context view) and see the raw secret value present — the ✗ INV-04 signal."
+  - "Open vulnerable/secrets.py and note redact_for_model returns the context unchanged."
+  - "Make redact_for_model mask every known secret value (recursively) before returning."
+  - "Re-run DVAH-004-exploit: the secret is absent from the model context; run DVAH-004-functional to confirm tool calls that legitimately use the credential still succeed."
+  - "Run the invariant test to confirm a secret nested anywhere in context is redacted."

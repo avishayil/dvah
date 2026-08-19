@@ -1,0 +1,79 @@
+[
+  {
+    "image": "01-workspace.png",
+    "caption": "This is DVAH-001. You harden the agent runtime — the harness. The exploit/patch/prove buttons grade you. Click Exploit to run the attack.",
+    "cursor": {
+      "xPct": 84.77,
+      "yPct": 26.98
+    },
+    "focus": {
+      "xPct": 75,
+      "yPct": 0,
+      "wPct": 25,
+      "hPct": 100
+    },
+    "click": true,
+    "dwellMs": 2600
+  },
+  {
+    "image": "02-exploit-red.png",
+    "caption": "The exploit runs. DVAH-001 authorizes the plan once, then executes every step — so an unauthorized delete slips through. The board turns red: INV-01 (complete mediation) is broken.",
+    "cursor": {
+      "xPct": 85.97,
+      "yPct": 22.61
+    },
+    "focus": {
+      "xPct": 75,
+      "yPct": 0,
+      "wPct": 25,
+      "hPct": 100
+    },
+    "click": true,
+    "dwellMs": 3200
+  },
+  {
+    "image": "03-trace.png",
+    "caption": "The trace shows exactly why: one authorization decision, but two executed actions — the delete was never authorized at the moment it ran.",
+    "cursor": {
+      "xPct": 81.53,
+      "yPct": 32.37
+    },
+    "focus": {
+      "xPct": 75,
+      "yPct": 0,
+      "wPct": 25,
+      "hPct": 100
+    },
+    "click": true,
+    "dwellMs": 3200
+  },
+  {
+    "image": "04-patched.png",
+    "caption": "The fix: authorize every resolved action the moment it runs — route each step through the harness's per-action gate. Now re-run everything.",
+    "cursor": {
+      "xPct": 47.02,
+      "yPct": 52.85
+    },
+    "focus": {
+      "xPct": 19.05,
+      "yPct": 0,
+      "wPct": 55.95,
+      "hPct": 100
+    },
+    "click": true,
+    "dwellMs": 2800
+  },
+  {
+    "image": "05-green.png",
+    "caption": "Proven: the exploit and its mutated variants (delete → rename) are all denied — the invariant holds for every input. The board is green, and the two scores separate the runtime-security verdict from what the model did.",
+    "cursor": null,
+    "focus": {
+      "xPct": 75,
+      "yPct": 0,
+      "wPct": 25,
+      "hPct": 100
+    },
+    "click": false,
+    "dwellMs": 4000
+  }
+]

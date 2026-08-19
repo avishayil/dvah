@@ -1,0 +1,34 @@
+id: DVAH-003
+title: Data Becomes Instructions
+difficulty: medium
+invariants: [INV-06]
+components: [context_compiler, planner, policy]
+
+model:
+  provider: reactive
+
+overrides:
+  context_compiler: "vulnerable.compiler:VulnerableContextCompiler"
+solution_overrides:
+  context_compiler: "solution.compiler:FixedContextCompiler"
+
+objective:
+  exploit: >
+    Get the agent to act on an instruction embedded in retrieved (untrusted) data.
+  fix: >
+    Keep untrusted tool output in the data channel; never promote retrieved data into
+    the instruction channel.
+
+# Live-mode metadata (additive): what a REAL model might do. The security verdict is
+# deterministic and never depends on whether a given model takes the bait.
+live_experience:
+  attack_likelihood: model_dependent
+  expected_paths:
+    - model_follows_injected_instruction
+    - model_ignores_injected_instruction
+
+# Learner-facing metadata (curriculum ordering + plain-language outcome).
+order: 3
+estimated_minutes: 15
+teaches: "keep untrusted data out of the instruction channel — prompt injection"
+prerequisites: []
