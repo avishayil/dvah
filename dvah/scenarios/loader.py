@@ -13,7 +13,16 @@ from pathlib import Path
 
 import yaml
 
-from ..artifacts import builtin_catalog, load_agent, load_catalog_file, load_skill, overlay
+from ..artifacts import (
+    builtin_catalog,
+    load_agent,
+    load_catalog_file,
+    load_prompts,
+    load_resources,
+    load_skill,
+    load_workflows,
+    overlay,
+)
 from ..harness.config import HarnessConfig
 from ..harness.context import RunContext
 from ..models.agent import AgentDefinition
@@ -56,6 +65,12 @@ class LoadedChallenge:
     agent_defs: dict = field(default_factory=dict)
     # tools_catalog: "namespace.action" -> ToolSpec (core catalog + optional lab overlay).
     tools_catalog: dict = field(default_factory=dict)
+    # resources: id -> Resource (agent-facing knowledge; advisory, deterministic path ignores).
+    resources: dict = field(default_factory=dict)
+    # workflows: task_id -> Workflow (descriptive view of plans.yaml; not executed).
+    workflows: dict = field(default_factory=dict)
+    # prompts: agent_id -> PromptStack (layered system→agent→skill→task; live path only).
+    prompts: dict = field(default_factory=dict)
     # Optional live-mode metadata (additive): {attack_likelihood, expected_paths}. It
     # describes what a REAL model *might* do; the deterministic security verdict never
     # depends on it, so labs stay model-independent.
@@ -258,6 +273,7 @@ def load_challenge(
     cfg = HarnessConfig(**slots)
     root_ctx = _build_root_ctx(spec, users, agents)
     tasks = _read_yaml(env_dir / "tasks.yaml") or {}
+    agent_defs = _load_agent_defs(challenge_dir, agents)
     return LoadedChallenge(
         harness=Harness(cfg),
         root_ctx=root_ctx,
@@ -269,8 +285,11 @@ def load_challenge(
         default_prompt=_default_prompt(spec),
         live_experience=spec.get("live_experience") or {},
         skills=_load_skills(challenge_dir, env_dir),
-        agent_defs=_load_agent_defs(challenge_dir, agents),
+        agent_defs=agent_defs,
         tools_catalog=_load_tools_catalog(env_dir),
+        resources=load_resources(challenge_dir),
+        workflows=load_workflows(challenge_dir),
+        prompts=load_prompts(challenge_dir, agent_defs, tasks),
     )
 
 
