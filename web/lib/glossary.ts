@@ -25,6 +25,22 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       "The `github` tool offers `issue.read`, `issue.comment`, and `repository.delete`. Holding the tool isn't holding every operation on it.",
     lab: "DVAH-008",
   },
+  "tool-definition": {
+    term: "tool definition",
+    short: "The advisory schema for a tool — name, description, JSON input schema. Never authorization.",
+    long: "Each `namespace.action` tool ships a definition: a name, a human-readable description, and a JSON input schema (aligned to MCP's `inputSchema`) describing its arguments. It's metadata that tells the model how to call the tool and helps it choose — it is advisory only. Presence of a definition never means the action is authorized; the harness still gates the resolved action.",
+    example:
+      "`github.issue.comment` advertises `{issue: number, body: string}`. The model reads that to format its call, but the definition grants nothing — the capability check at execution time decides.",
+    lab: "DVAH-008",
+  },
+  skill: {
+    term: "skill",
+    short: "A loadable unit — a SKILL.md with YAML frontmatter plus a Markdown instruction body.",
+    long: "A skill packages reusable agent behavior as a real file: a `SKILL.md` whose YAML frontmatter declares name, description, version, allowed-tools, and requested-permissions, followed by a Markdown body of instructions injected into the agent's context. The load-bearing rule (INV-07): requesting a permission is not being granted it — granted = requested ∩ approved. A malicious or over-eager skill can ask for the world; the harness only confers what was independently approved.",
+    example:
+      "A `github-investigator` SKILL.md requests `github.repository.delete` in its frontmatter. It was never approved, so loading the skill grants `issue.read` only — the delete request is dropped, not honored.",
+    lab: "DVAH-008",
+  },
   mcp: {
     term: "MCP (Model Context Protocol)",
     short: "A standard way to plug external tool servers into an agent — a real process/network boundary.",

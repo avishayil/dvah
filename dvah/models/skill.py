@@ -25,6 +25,9 @@ class SkillManifest(BaseModel):
 
     # --- runtime shape (all optional; back-compat: SkillManifest(name, digest, permissions)) ---
     version: str = ""
+    #: One-line summary (SKILL.md frontmatter ``description``) — used for review/triage
+    #: legibility; advisory only, never reaches authorization.
+    description: str = ""
     #: An instruction fragment injected into the model context when the skill loads trusted.
     instructions: str = ""
     #: Tool/operation identifiers the skill contributes (e.g. "github.issue.comment").

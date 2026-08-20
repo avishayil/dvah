@@ -1,0 +1,31 @@
+# Tool specs for the `files` namespace, shared by the native + HTTP providers.
+# Advisory metadata only (name/description/input_schema); never reaches action_hash.
+# input_schema uses JSON Schema (aligned to MCP tool `inputSchema`).
+- namespace: files
+  action: read
+  name: files_read
+  description: Read the contents of a file at a path.
+  input_schema:
+    type: object
+    properties:
+      resource: {type: string, description: "absolute file path, e.g. /prod/customer.db"}
+    required: [resource]
+- namespace: files
+  action: delete
+  name: files_delete
+  description: Delete a file at a path.
+  input_schema:
+    type: object
+    properties:
+      resource: {type: string, description: "absolute file path to delete"}
+    required: [resource]
+- namespace: files
+  action: rename
+  name: files_rename
+  description: Rename or move a file to a new path.
+  input_schema:
+    type: object
+    properties:
+      resource: {type: string, description: "source file path"}
+      dest: {type: string, description: "destination file path"}
+    required: [resource, dest]

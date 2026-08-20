@@ -1,0 +1,11 @@
+# Tool specs for the `mcp` namespace (MCP subprocess provider, INV-14 boundary).
+# Advisory metadata only; never reaches action_hash. JSON Schema ≈ MCP `inputSchema`.
+- namespace: mcp
+  action: fetch
+  name: mcp_fetch
+  description: Fetch a URL through the MCP server (egress crosses a contained boundary).
+  input_schema:
+    type: object
+    properties:
+      resource: {type: string, description: "URL to fetch"}
+    required: [resource]

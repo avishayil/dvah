@@ -36,6 +36,14 @@ authorization/approval/capabilities/provenance/secrets all bind to that envelope
   `model.fallback` chain (deterministic = last resort + CI oracle). Model identity is
   recorded as `ModelIdentity` on the envelope but only the provider label reaches
   `action_hash`.
+- `dvah/artifacts/` — dependency-free parsers that turn real-world artifact files into the
+  frozen models (Anthropic/Claude Code conventions, cross-ref MCP): `frontmatter.py`
+  (`---` YAML splitter), `skill_md.py` (`load_skill` → `SkillManifest` from a `SKILL.md`),
+  `agent_md.py` (`load_agent` → `AgentDefinition` from `agents/<id>.md`), `tool_catalog.py`
+  (`builtin_catalog`/`load_catalog_file`/`overlay`).
+- `dvah/tools/catalog/*.yaml` — the core, provider-shared tool catalog (files, github,
+  email, cloud, mcp): one `ToolSpec` per `namespace.action` the providers implement, with
+  `input_schema` aligned to MCP's `inputSchema`. Advisory only — never reaches `action_hash`.
 - `dvah/mutation/` — the chaos engine: per-invariant "defeat" probes.
 - `dvah/webapi/` — FastAPI app wrapping the harness for the web UI (sessions, sandboxed
   runner, trace, hints, mutate, settings, optional tutor, and an opt-in key-gated
@@ -48,7 +56,10 @@ authorization/approval/capabilities/provenance/secrets all bind to that envelope
   runs in a separate `AdapterServer` process with no tests/solution, grader drives the
   invariant battery over stdio via `RpcAdapter`). See `docs/ARCHITECTURE.md`.
 - `dvah/scenarios/loader.py` + `catalog.py` — load a challenge into a runnable harness by
-  swapping named slots with the challenge's `vulnerable/` or `solution/` code.
+  swapping named slots with the challenge's `vulnerable/` or `solution/` code. The
+  `LoadedChallenge` also exposes `.skills` (role/name → `SkillManifest`), `.agent_defs`
+  (agent_id → `AgentDefinition`), and `.tools_catalog` (id → `ToolSpec`), parsed from the
+  file-based artifacts below.
 - `challenges/DVAH-00N-*/` — the labs (`scenario.yaml`, `README.md`, `vulnerable/`, hidden
   `solution/`, `environment/*.yaml`, `tests/`, `walkthrough.yaml`).
 - `services/` — FastAPI mock external systems; `web/` — Next.js browser IDE.
@@ -114,6 +125,12 @@ Optionally add:
   `run_session` loop with its own identity (`<agent>@d<depth>`) and optional `child_skills`
   (opt-in via the delegate step). Emits `subagent.started`. Deterministic children replay
   their `subplan_task_id` script, so DVAH-002/006 are byte-identical; the gate is unchanged.
+- **File-based artifacts** — a lab may ship skills as `skills/<name>/SKILL.md` files plus a
+  `skills/registry.yaml` (role → dir) instead of the legacy `environment/skills.yaml`, and
+  declare agents as `agents/<id>.md` (Claude Code subagent frontmatter + system-prompt body).
+  These parse into `loaded.skills` / `loaded.agent_defs` via `dvah/artifacts/`; the tool
+  catalog defaults to `builtin_catalog()` and can be overlaid per-lab with
+  `environment/tools.yaml`. All of it is advisory metadata for the live/subagent path.
 
 ## Gotchas
 
@@ -121,5 +138,8 @@ Optionally add:
 - The lab runner shells out to `pytest`, so **pytest is a runtime dependency** of the
   `webapi` image (not just dev).
 - e2e and live-model paths must stay out of CI.
+- An authored `agents/<id>.md`'s `capabilities` must **equal** the `agents.yaml` root caps —
+  a test enforces this. Artifact metadata (`description`, system-prompt bodies,
+  `input_schema`) is advisory and must **never** affect authorization or `action_hash`.
 - Deployment target is **local single-user**; auth/rate-limiting/network isolation are a
   documented pre-hosting track, not yet implemented.

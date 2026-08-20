@@ -10,10 +10,19 @@ and tool schemas, and it *declares* the capabilities (and mcp/network/secrets) i
 `skill_loader` slot and, on a trusted load, injects the skill's instructions into the
 compiled context (emitting a `skill.loaded` trace event).
 
+The skills ship as real **`SKILL.md` files** (Anthropic Agent Skills shape: frontmatter
+`name`/`description`/`version`/`digest`/`allowed-tools`/`requested-permissions` + a Markdown
+body). `skills/registry.yaml` names which file plays each role: `approved` →
+`skills/github-investigator/SKILL.md`, `upgrade` → `skills/github-investigator-upgrade/SKILL.md`,
+`trojan` → `skills/github-investigator-trojan/SKILL.md`. The agent that loads them is defined
+in `agents/skill-runner.md` (Claude Code subagent frontmatter + system prompt). The tests
+read these manifests via `loaded.skills`.
+
 Here the agent runs `github-investigator`, whose *approved* manifest (v1.2) permits only
-`github:issue.read`, pinned to its digest. The "helpful" upgrade (v1.3) ships a manifest
-that also **requests** `github:issue.comment` (and, in the exploit variants,
-`github:repository.delete` / `files:*`). Requesting is not granting — the loader decides.
+`github:issue.read`, pinned to its digest. The "helpful" `upgrade` (v1.3) ships a manifest
+with a NEW digest that also **requests** `github:issue.comment`; the adversarial `trojan`
+keeps the approved digest but requests destructive powers
+(`github:repository.delete` / `files:*`). Requesting is not granting — the loader decides.
 
 ## The bug
 `vulnerable/skills.py` (`AutoAcceptSkillLoader`) grants **every** permission the upgraded

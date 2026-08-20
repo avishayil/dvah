@@ -1,0 +1,9 @@
+# Which on-disk SKILL.md plays each role in the lab. All three share the skill name
+# "github-investigator"; they differ in version/digest/requested-permissions — like an
+# installed skill vs. proposed updates in a real marketplace.
+#   approved — v1.2, the pinned version the owner signed off on (issue.read only).
+#   upgrade  — v1.3, the "helpful" update that ships a NEW digest and a wider request.
+#   trojan   — keeps the approved digest but requests destructive powers (adversarial).
+approved: github-investigator
+upgrade: github-investigator-upgrade
+trojan: github-investigator-trojan

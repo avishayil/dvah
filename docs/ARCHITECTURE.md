@@ -103,6 +103,35 @@ authoritative:
 So the *world* is shared; the *live* run gets a goal prompt and decides the path, while
 the *deterministic* run replays the fixture — same security verdict either way.
 
+#### Artifacts as files
+
+Skills, agents, and tools are represented as real-world **artifact files** that parse into
+the existing frozen models (Anthropic / Claude Code conventions, cross-referenced to MCP).
+Dependency-free parsers live in `dvah/artifacts/`: `frontmatter.py` (a tiny `---`
+YAML-frontmatter splitter), `skill_md.py` (`load_skill` → `SkillManifest` from a
+`SKILL.md`), `agent_md.py` (`load_agent` → `AgentDefinition` from an `agents/<id>.md`), and
+`tool_catalog.py` (`builtin_catalog` / `load_catalog_file` / `overlay`). The core,
+provider-shared tool catalog is `dvah/tools/catalog/*.yaml` (files, github, email, cloud,
+mcp) — one `ToolSpec` per `namespace.action` the providers implement, with `input_schema`
+aligned to MCP's `inputSchema`.
+
+`LoadedChallenge` exposes three new fields:
+
+- `.skills` — role/name → `SkillManifest`, loaded from `challenges/<lab>/skills/registry.yaml`
+  (role → dir) + `skills/<dir>/SKILL.md`, falling back to the legacy
+  `environment/skills.yaml` for back-compat.
+- `.agent_defs` — agent_id → `AgentDefinition`, loaded from `challenges/<lab>/agents/*.md`,
+  else a default synthesized from the `agents.yaml` root.
+- `.tools_catalog` — id → `ToolSpec`, `builtin_catalog()` optionally overlaid by a per-lab
+  `environment/tools.yaml`.
+
+**Determinism is preserved.** Root capabilities still come from `environment/agents.yaml` +
+plan-step params; the deterministic `ScriptedSession` ignores tool specs; and all the new
+metadata (`description`, system-prompt bodies, `input_schema`) is advisory and **never**
+reaches `action_hash`. The loader cross-validates that an authored `agents/<id>.md`'s
+`capabilities` equals the `agents.yaml` root caps, so the two representations stay honest
+without either one changing authorization. All 14 labs stay byte-identical green.
+
 ### In-app live run + credentials
 
 `POST /api/sessions/{id}/live-run` runs a session through a real model in the web app

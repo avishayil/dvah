@@ -31,3 +31,25 @@ own invariant property + adversarial tests.
 
 > These are cross-references for orientation, not a compliance claim. Framework documents
 > evolve; verify against the primary source before citing DVAH as evidence of coverage.
+
+## Artifact formats ↔ Anthropic / MCP
+
+DVAH represents skills, agents, and tools as real-world **artifact files** that parse into
+the frozen Pydantic models — following Anthropic / Claude Code conventions and
+cross-referenced to MCP — so a lab reads like the platforms it teaches. As with the
+invariant table, these mappings are **indicative, not normative**: the file shapes track
+current conventions for legibility, not conformance. Crucially, all of this metadata is
+**advisory** — root capabilities still come from `environment/agents.yaml` + plan-step
+params, and none of it (descriptions, system-prompt bodies, `input_schema`) reaches
+`action_hash`.
+
+| DVAH artifact | Anthropic / Claude Code analog | MCP analog |
+|---------------|-------------------------------|------------|
+| `SKILL.md` frontmatter + Markdown body (`name`/`description`/`allowed-tools` + instructions) | Anthropic **Agent Skills** (SKILL.md `name`/`description`/`allowed-tools` + body) | packaged capability with an advertised description |
+| `requested-permissions` (request ≠ grant, INV-07) | skill capability grants — requesting is not granting | least privilege + explicit user consent |
+| `agents/<id>.md` (`name`/`description`/`model`/`tools` + system-prompt body) | Claude Code **subagent definition** (frontmatter + system prompt) | scoped client/agent identity |
+| `ToolSpec.input_schema` (per `namespace.action`, JSON Schema) | Anthropic tool-use `input_schema` | MCP tool `inputSchema` (JSON Schema) |
+| `mcp` / `network` / `secrets` declarations | credential custody off the model path (no passthrough) | audience-bound tokens; no token passthrough |
+
+> Same disclaimer as above: these are orientation cross-references, not a compliance claim.
+> The artifact metadata is advertised to models but never authorizes an action.

@@ -1,0 +1,18 @@
+# Tool specs for the `cloud` namespace (HTTP provider → mock cloud service).
+# Advisory metadata only; never reaches action_hash. JSON Schema ≈ MCP `inputSchema`.
+- namespace: cloud
+  action: instance.list
+  name: cloud_instance_list
+  description: List cloud compute instances.
+  input_schema:
+    type: object
+    properties: {}
+- namespace: cloud
+  action: instance.terminate
+  name: cloud_instance_terminate
+  description: Terminate a cloud compute instance.
+  input_schema:
+    type: object
+    properties:
+      resource: {type: string, description: "instance id to terminate"}
+    required: [resource]

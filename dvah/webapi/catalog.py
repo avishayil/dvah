@@ -115,6 +115,40 @@ def _yaml(challenge_dir: Path, name: str) -> dict:
     return yaml.safe_load(path.read_text()) if path.exists() else {}
 
 
+def _artifacts(challenge_dir: Path) -> dict:
+    """Compact, review-facing summary of a lab's file-based artifacts (skills/agents/tools).
+    Values only — no secrets. Empty lists for labs that declare none."""
+    from ..scenarios.loader import load_challenge
+
+    loaded = load_challenge(challenge_dir)
+    skills = [
+        {
+            "role": role,
+            "name": m.name,
+            "version": m.version,
+            "description": m.description,
+            "requested_permissions": [f"{c.namespace}.{c.action}" for c in m.permissions],
+            "tools": list(m.tools),
+        }
+        for role, m in loaded.skills.items()
+    ]
+    agents = [
+        {
+            "agent_id": a.agent_id,
+            "description": a.description,
+            "model": a.model,
+            "tools": list(a.tools),
+            "skills": list(a.skills),
+        }
+        for a in loaded.agent_defs.values()
+    ]
+    tools = [
+        {"id": s.id, "name": s.name, "description": s.description}
+        for s in sorted(loaded.tools_catalog.values(), key=lambda s: s.id)
+    ]
+    return {"skills": skills, "agents": agents, "tools": tools}
+
+
 def briefing(challenge_id: str) -> dict:
     challenge_dir = base.resolve_challenge(challenge_id)
     spec = base.read_scenario(challenge_dir)
@@ -139,6 +173,7 @@ def briefing(challenge_id: str) -> dict:
         },
         "editable_files": _editable_files(challenge_dir),
         "references": _references(challenge_dir),
+        "artifacts": _artifacts(challenge_dir),
         "tasks": tasks,
         "overridden_slots": list((spec.get("overrides") or {}).keys()),
         "components": spec.get("components", []),

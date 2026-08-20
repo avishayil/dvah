@@ -1,6 +1,83 @@
 "use client";
 import { Term } from "./term";
-import type { ChallengeDetail } from "@/lib/types";
+import type { Artifacts, ChallengeDetail } from "@/lib/types";
+
+// Compact, read-only view of a lab's file-based artifacts: loadable skills (SKILL.md),
+// agent definitions (agents/*.md), and the built-in tool catalog. Gated behind
+// skills/agents presence — every lab has a tool catalog, so showing it unconditionally
+// would clutter labs that declare no skills or agents. When shown, tools are listed too.
+function ArtifactsSection({ artifacts }: { artifacts?: Artifacts }) {
+  if (!artifacts) return null;
+  const { skills, agents, tools } = artifacts;
+  if (skills.length === 0 && agents.length === 0) return null;
+  return (
+    <section data-testid="artifacts-section">
+      <h2 className="mb-1 text-xs uppercase tracking-wide text-muted">Artifacts</h2>
+      {skills.length > 0 && (
+        <div className="mb-3">
+          <div className="text-xs text-fg">
+            <Term id="skill">Skills</Term>
+          </div>
+          <ul className="mt-1 space-y-1">
+            {skills.map((s) => (
+              <li key={s.role} className="text-xs text-muted">
+                <span className="mono text-accent">
+                  {s.name}@{s.version}
+                </span>{" "}
+                ({s.role})
+                {s.requested_permissions.length > 0 && (
+                  <>
+                    {" · requests "}
+                    <span className="mono">{s.requested_permissions.join(", ")}</span>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {agents.length > 0 && (
+        <div className="mb-3">
+          <div className="text-xs text-fg">Agents</div>
+          <ul className="mt-1 space-y-1">
+            {agents.map((a) => (
+              <li key={a.agent_id} className="text-xs text-muted">
+                <span className="mono text-accent">{a.agent_id}</span>
+                {a.tools.length > 0 && (
+                  <>
+                    {" · tools "}
+                    <span className="mono">{a.tools.join(", ")}</span>
+                  </>
+                )}
+                {a.skills.length > 0 && (
+                  <>
+                    {" · skills "}
+                    <span className="mono">{a.skills.join(", ")}</span>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {tools.length > 0 && (
+        <div>
+          <div className="text-xs text-fg">
+            <Term id="tool-definition">Tool catalog</Term>
+          </div>
+          <ul className="mt-1 space-y-1">
+            {tools.map((t) => (
+              <li key={t.id} className="text-xs text-muted">
+                <span className="mono text-accent">{t.id}</span>
+                {t.description && ` — ${t.description}`}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
+  );
+}
 
 // One scrollable briefing (no tabs): what you're fixing → the rule at stake → how
 // authority flows → environment → read-only runtime source. CTF mode hides the
@@ -82,6 +159,8 @@ export function BriefingPanel({
           </section>
         )}
 
+        <ArtifactsSection artifacts={detail.artifacts} />
+
         {/* All read-only context now opens as grouped tabs in the editor — the environment
             (world) and the harness modules the code calls into (reference). */}
         <section>
@@ -90,7 +169,7 @@ export function BriefingPanel({
             Everything you read (but don&apos;t edit) is open as{" "}
             <span className="text-fg">read-only tabs in the editor →</span>, lock-badged and
             grouped: <span className="text-fg">the world</span> the runtime runs against (users,
-            agents, resources, plans){detail.references?.length > 0 && (
+            agents, resources, plans, plus any skills/SKILL.md and agent definitions){detail.references?.length > 0 && (
               <>
                 {" "}
                 and <span className="text-fg">the harness reference</span> — the modules your code
