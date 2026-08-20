@@ -43,7 +43,9 @@ _MAX_SESSIONS = int(os.environ.get("DVAH_MAX_SESSIONS", "200"))
 GRADER_MODE = os.environ.get("DVAH_GRADER", "inprocess")
 
 # What an isolated learner session is allowed to contain — never tests/ or solution/.
-_LEARNER_ONLY = ("vulnerable", "environment", "scenario.yaml")
+# ``skills``/``agents`` hold the file-based artifacts (SKILL.md, agents/*.md); they are
+# safe to copy (no secret material) and let the isolated session's loader parse them.
+_LEARNER_ONLY = ("vulnerable", "environment", "scenario.yaml", "skills", "agents")
 
 # A self-contained conftest for the session: binds the ``loaded`` fixture to THIS
 # challenge copy, so the sandboxed pytest run needs no ``--challenge`` option (avoiding
@@ -107,6 +109,31 @@ def _readonly_files(root: Path) -> list[dict]:
                 "writable": False,
             }
         )
+    out.extend(_artifact_files(root))
+    return out
+
+
+def _artifact_files(root: Path) -> list[dict]:
+    """The file-based artifacts (skills/**/SKILL.md, skills/registry.yaml, agents/*.md,
+    environment/tools.yaml) as read-only "world" tabs — the real-world shapes a learner
+    should recognize. Opt-in per lab; absent files simply contribute nothing."""
+    out: list[dict] = []
+    skills = root / "skills"
+    if skills.is_dir():
+        registry = skills / "registry.yaml"
+        if registry.exists():
+            out.append({"path": "skills/registry.yaml",
+                        "contents": registry.read_text(), "writable": False})
+        for md in sorted(skills.glob("*/SKILL.md")):
+            rel = md.relative_to(root).as_posix()
+            out.append({"path": rel, "contents": md.read_text(), "writable": False})
+    for md in sorted((root / "agents").glob("*.md")):
+        rel = md.relative_to(root).as_posix()
+        out.append({"path": rel, "contents": md.read_text(), "writable": False})
+    tools = root / "environment" / "tools.yaml"
+    if tools.exists():
+        out.append({"path": "environment/tools.yaml",
+                    "contents": tools.read_text(), "writable": False})
     return out
 
 

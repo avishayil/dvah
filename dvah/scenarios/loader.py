@@ -13,8 +13,11 @@ from pathlib import Path
 
 import yaml
 
+from ..artifacts import builtin_catalog, load_agent, load_catalog_file, load_skill, overlay
 from ..harness.config import HarnessConfig
 from ..harness.context import RunContext
+from ..models.agent import AgentDefinition
+from ..models.skill import SkillManifest
 from ..harness.executor import BuiltinExecutor
 from ..harness.loop import Harness
 from ..models.capability import Capability, CapabilitySet
@@ -46,6 +49,13 @@ class LoadedChallenge:
     tasks: dict = field(default_factory=dict)  # task_id -> {prompt, agent?, ...}
     agents: dict = field(default_factory=dict)  # agent_id -> {capabilities, delegation, skills}
     default_prompt: str = ""
+    # v0.3 "artifacts as files" metadata (additive; deterministic path ignores it).
+    # skills: role/name -> SkillManifest (from skills/**/SKILL.md, else environment/skills.yaml).
+    skills: dict = field(default_factory=dict)
+    # agent_defs: agent_id -> AgentDefinition (from agents/*.md, else synthesized from root).
+    agent_defs: dict = field(default_factory=dict)
+    # tools_catalog: "namespace.action" -> ToolSpec (core catalog + optional lab overlay).
+    tools_catalog: dict = field(default_factory=dict)
     # Optional live-mode metadata (additive): {attack_likelihood, expected_paths}. It
     # describes what a REAL model *might* do; the deterministic security verdict never
     # depends on it, so labs stay model-independent.
@@ -118,6 +128,78 @@ def _load_agents(agents_yaml: dict) -> dict:
     return declared
 
 
+def _manifest_from_yaml(name: str, variant: dict) -> SkillManifest:
+    """Bridge the legacy ``environment/skills.yaml`` variant shape into a SkillManifest."""
+    return SkillManifest(
+        name=name,
+        digest=str(variant.get("digest", "")),
+        permissions=tuple(Capability(**c) for c in (variant.get("permissions") or [])),
+        version=str(variant.get("version", "")),
+        description=str(variant.get("description", "")),
+        instructions=str(variant.get("instructions", "")),
+        tools=tuple(variant.get("tools") or ()),
+        mcp=tuple(variant.get("mcp") or ()),
+        network=tuple(variant.get("network") or ()),
+        secrets=tuple(variant.get("secrets") or ()),
+    )
+
+
+def _load_skills(challenge_dir: Path, env_dir: Path) -> dict:
+    """Load a lab's skills as SkillManifests keyed by role/name.
+
+    Prefers file-based artifacts (``skills/registry.yaml`` naming ``role -> dir`` with a
+    ``skills/<dir>/SKILL.md`` each). Falls back to the legacy ``environment/skills.yaml``
+    (``name -> {role -> variant}``) so a lab can migrate incrementally. Empty when neither
+    exists — most labs declare no skills.
+    """
+    registry = challenge_dir / "skills" / "registry.yaml"
+    if registry.exists():
+        roles = yaml.safe_load(registry.read_text()) or {}
+        return {
+            role: load_skill(challenge_dir / "skills" / dirname / "SKILL.md")
+            for role, dirname in roles.items()
+        }
+    legacy = _read_yaml(env_dir / "skills.yaml")
+    manifests: dict = {}
+    for name, variants in legacy.items():
+        if isinstance(variants, dict):
+            for role, variant in variants.items():
+                if isinstance(variant, dict):
+                    manifests[role] = _manifest_from_yaml(name, variant)
+    return manifests
+
+
+def _load_agent_defs(challenge_dir: Path, agents_yaml: dict) -> dict:
+    """Load ``agents/*.md`` into AgentDefinitions keyed by agent_id. When a lab ships no
+    agent files, synthesize a default from the ``agents.yaml`` root so every lab exposes a
+    definition (opt-in like tasks.yaml — no lab is forced to author one)."""
+    agents_dir = challenge_dir / "agents"
+    if agents_dir.is_dir():
+        defs = {}
+        for md in sorted(agents_dir.glob("*.md")):
+            agent = load_agent(md)
+            defs[agent.agent_id] = agent
+        if defs:
+            return defs
+    root = agents_yaml.get("root") or {}
+    agent_id = root.get("agent_id", "root-agent")
+    return {
+        agent_id: AgentDefinition(
+            agent_id=agent_id,
+            capabilities=tuple(Capability(**c) for c in (root.get("capabilities") or [])),
+        )
+    }
+
+
+def _load_tools_catalog(env_dir: Path) -> dict:
+    """The core provider-shared catalog, optionally overlaid by a per-lab tools.yaml."""
+    catalog = dict(builtin_catalog())
+    lab_tools = env_dir / "tools.yaml"
+    if lab_tools.exists():
+        catalog = overlay(catalog, load_catalog_file(lab_tools))
+    return catalog
+
+
 def _build_tools(transport: str, files: FileStore, github: GithubStore):
     if transport == "http":
         from ..providers.http_tools import HttpToolProvider  # lazy: needs httpx + services
@@ -186,6 +268,9 @@ def load_challenge(
         agents=_load_agents(agents),
         default_prompt=_default_prompt(spec),
         live_experience=spec.get("live_experience") or {},
+        skills=_load_skills(challenge_dir, env_dir),
+        agent_defs=_load_agent_defs(challenge_dir, agents),
+        tools_catalog=_load_tools_catalog(env_dir),
     )
 
 

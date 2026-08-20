@@ -16,6 +16,8 @@ const ORDER = [
   "authorization",
   "capability",
   "tool",
+  "tool-definition",
+  "skill",
   "delegation",
   "approval",
   "provenance",

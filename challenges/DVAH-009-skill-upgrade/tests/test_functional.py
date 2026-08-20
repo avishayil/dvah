@@ -1,15 +1,13 @@
 import pytest
 
-from dvah.models.capability import Capability, CapabilitySet
-from dvah.models.skill import SkillManifest
-
-APPROVED = (Capability(namespace="github", action="issue.read"),)
+from dvah.models.capability import CapabilitySet
 
 
 @pytest.mark.functional
 def test_approved_skill_grants_its_permissions(loaded):
-    """A skill whose manifest matches the approved/pinned version loads normally."""
+    """The approved, pinned skill (from skills/github-investigator/SKILL.md) loads normally."""
+    approved = loaded.skills["approved"]
     loader = loaded.harness.cfg.skill_loader
-    manifest = SkillManifest(name="gh", digest="v1", permissions=APPROVED)
-    res = loader.load(manifest, APPROVED, "v1")
-    assert res.granted == CapabilitySet(caps=frozenset(APPROVED))
+    res = loader.load(approved, approved.permissions, approved.digest)
+    assert res.granted == CapabilitySet(caps=frozenset(approved.permissions))
+    assert res.requires_reapproval is False

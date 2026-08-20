@@ -1,0 +1,31 @@
+# Tool specs for the `github` namespace, shared by the native + HTTP providers.
+# Advisory metadata only; never reaches action_hash. JSON Schema ≈ MCP `inputSchema`.
+- namespace: github
+  action: issue.read
+  name: github_issue_read
+  description: List issues for a repository.
+  input_schema:
+    type: object
+    properties:
+      resource: {type: string, description: "repository id, e.g. acme/app"}
+    required: [resource]
+- namespace: github
+  action: issue.comment
+  name: github_issue_comment
+  description: Post a comment on an issue.
+  input_schema:
+    type: object
+    properties:
+      resource: {type: string, description: "repository id"}
+      issue: {type: integer, description: "issue number"}
+      body: {type: string, description: "comment text"}
+    required: [resource, issue, body]
+- namespace: github
+  action: repository.delete
+  name: github_repository_delete
+  description: Delete a repository.
+  input_schema:
+    type: object
+    properties:
+      resource: {type: string, description: "repository id to delete"}
+    required: [resource]

@@ -200,6 +200,8 @@ dvah/            # the harness package
   security/      # first-class swappable security services (policy, approvals, caps, …)
   harness/       # runtime plumbing: broker gate, executor, delegation, context
   providers/     # model + tool providers (deterministic, anthropic, openai, bedrock, http)
+  artifacts/     # parsers for file-based artifacts (SKILL.md / agents/*.md / tool catalog)
+  tools/catalog/ # core, provider-shared tool specs (files, github, email, cloud, mcp)
   mutation/      # the chaos engine (invariant-defeat probes)
   webapi/        # FastAPI app wrapping the harness for the web UI
   cli.py         # dvah list|start|test|trace|mutate

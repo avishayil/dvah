@@ -1,0 +1,14 @@
+# Tool specs for the `email` namespace (HTTP provider → mock email service).
+# Advisory metadata only; never reaches action_hash. JSON Schema ≈ MCP `inputSchema`.
+- namespace: email
+  action: send
+  name: email_send
+  description: Send an email to a recipient.
+  input_schema:
+    type: object
+    properties:
+      resource: {type: string, description: "recipient address (fallback for 'to')"}
+      to: {type: string, description: "recipient address"}
+      subject: {type: string, description: "email subject"}
+      body: {type: string, description: "email body"}
+    required: [to]
