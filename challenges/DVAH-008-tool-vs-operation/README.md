@@ -4,13 +4,13 @@
 not the tool name.
 
 ## The bug
-`vulnerable/policy.py` authorizes on the operation **namespace**: if the agent holds
+`guardrails/vulnerable/policy.py` authorizes on the operation **namespace**: if the agent holds
 any `github` capability at all, every `github` operation is allowed. An agent with only
 `github:issue.read` can therefore delete a repository.
 
 ## Your job
 Authorize the specific operation against the exact capability held. The reference fix is
-in `solution/`.
+in `guardrails/solution/`.
 
 ## Prove it
 ```

@@ -124,7 +124,7 @@ export default function LabPage({ params }: { params: Promise<{ id: string }> })
 
   async function saveAll() {
     if (!sid) return;
-    // Only editable (vulnerable/) files are persisted — environment tabs are read-only.
+    // Only editable (guardrails/vulnerable/) files are persisted — environment tabs are read-only.
     const writable = files.filter((f) => f.writable !== false);
     await Promise.all(writable.map((f) => api.putFile(sid, f.path, f.contents)));
   }
@@ -208,7 +208,7 @@ export default function LabPage({ params }: { params: Promise<{ id: string }> })
   });
 
   // Overlay the reference fix onto the editable file(s), matched by basename
-  // (solution/executor.py → vulnerable/executor.py). Deterministic, no model.
+  // (guardrails/solution/executor.py → guardrails/vulnerable/executor.py). Deterministic, no model.
   async function applyDemoFix() {
     if (!sid) return;
     const sol = await api.solution(id, sid);

@@ -9,7 +9,7 @@ So before you type "🚨 CRITICAL RCE 🚨", let's sort the *intentional* chaos 
 
 ## 🟢 Please do NOT report these (they're the product)
 
-Everything under `challenges/*/vulnerable/` is broken **on purpose**. It is a lovingly
+Everything under `challenges/*/guardrails/vulnerable/` is broken **on purpose**. It is a lovingly
 curated museum of bad decisions:
 
 - "I can make the agent delete a repo it was never authorized to touch." — Yes. That's
@@ -41,9 +41,10 @@ like a chemistry set, not a public API.
 - The default runner confines code to your local process/container. On macOS it's
   timeout-only (no hard resource limits). It is **not** a hardened multi-tenant sandbox.
 - Two grader modes (`DVAH_GRADER`): **`inprocess`** (default, self-study) copies the
-  whole challenge — including `tests/` and `solution/` — into your session for fast
+  whole challenge — including `evals/` and `guardrails/solution/` — into your session for fast
   iteration; the solution is only hidden from the file API, so it's on disk and **not**
-  isolation. **`isolated`** (assessment/CTF) keeps the learner session to `vulnerable/`
+  isolation. **`isolated`** (assessment/CTF) keeps the learner session to
+  `guardrails/vulnerable/`
   only and grades out of band in a throwaway workspace where the reference solution never
   coexists with learner-controlled code — use it for anything competitive/graded, ideally
   with a private challenge source (the public repo ships the solutions).

@@ -8,12 +8,12 @@ instructions.
 follow-up action. The issue body contains a planted instruction ("post this comment").
 
 ## The bug
-`vulnerable/compiler.py` places tool output (untrusted data) into the **instruction**
+`guardrails/vulnerable/compiler.py` places tool output (untrusted data) into the **instruction**
 channel. When the agent reflects, the planted instruction is treated as a command and
 the agent posts the injected comment.
 
 ## Your job
-Keep retrieved data in the **data** channel. The reference fix is in `solution/`.
+Keep retrieved data in the **data** channel. The reference fix is in `guardrails/solution/`.
 
 ## Prove it
 ```

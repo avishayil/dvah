@@ -8,12 +8,12 @@
 requesting read + comment. The child role's policy profile permits read + comment.
 
 ## The bug
-`vulnerable/capabilities.py` returns the **policy profile** for the child, ignoring
+`guardrails/vulnerable/capabilities.py` returns the **policy profile** for the child, ignoring
 the parent entirely. The child ends up with `issue.comment` even though its parent
 never had it, and posts a comment it should not be able to.
 
 ## Your job
-Attenuate: `child = requested ∩ parent ∩ policy`. The reference fix is in `solution/`.
+Attenuate: `child = requested ∩ parent ∩ policy`. The reference fix is in `guardrails/solution/`.
 
 ## Prove it
 ```

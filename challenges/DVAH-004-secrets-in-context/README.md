@@ -8,12 +8,12 @@ The agent reads a file that happens to contain a credential, then that content i
 compiled into the model's context.
 
 ## The bug
-`vulnerable/secrets.py` does not redact secrets from the compiled model context, so the
+`guardrails/vulnerable/secrets.py` does not redact secrets from the compiled model context, so the
 credential is handed straight to the model.
 
 ## Your job
 Redact every secret value (anywhere, including nested) before the model sees it. The
-reference fix is in `solution/`.
+reference fix is in `guardrails/solution/`.
 
 ## Prove it
 ```

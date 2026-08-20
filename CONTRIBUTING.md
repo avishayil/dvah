@@ -17,7 +17,7 @@ and [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) for the harness design.
 ## Ground rules
 
 - **Immutability**: data models are frozen; never mutate — return copies.
-- **Small, cohesive files**; keep the `harness/` (plumbing) vs `security/` (controls)
+- **Small, cohesive files**; keep the `harness/` (plumbing) vs `guardrails/` (controls)
   split intact.
 - Every change ships with tests. Markers: `unit`/`integration` run in CI; `e2e` is manual
   and must stay out of CI. Keep the 80% coverage gate on `dvah` green.
@@ -26,8 +26,9 @@ and [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) for the harness design.
 ## Adding a lab
 
 Follow the DVAH-001/002 pattern (see [`CLAUDE.md`](./CLAUDE.md) → "Adding a lab"):
-a `scenario.yaml` overriding exactly one security slot, `vulnerable/` + hidden `solution/`,
-an `environment/`, `tests/` (functional/exploit/invariant/adversarial), and a
+a `scenario.yaml` overriding exactly one guardrail slot, `guardrails/vulnerable/` + hidden
+`guardrails/solution/`, an `environment/`, `workflows/plans.yaml`, `evals/`
+(functional/exploit/invariant/adversarial), and a
 `walkthrough.yaml`. Tag invariant tests with `@pytest.mark.invariant("INV-0X")`. Verify the
 lab is **red vulnerable / green solution**, including the adversarial suite.
 
