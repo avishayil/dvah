@@ -114,6 +114,13 @@ def _read_yaml(path: Path) -> dict:
     return yaml.safe_load(path.read_text()) if path.exists() else {}
 
 
+def _plans_path(challenge_dir: Path, env_dir: Path) -> Path:
+    """The deterministic fixture: ``workflows/plans.yaml`` (reference layout) else the
+    legacy ``environment/plans.yaml``. Contents are byte-identical; only the location moved."""
+    new = challenge_dir / "workflows" / "plans.yaml"
+    return new if new.exists() else (env_dir / "plans.yaml")
+
+
 def _default_prompt(spec: dict) -> str:
     """A reasonable live-agent goal prompt derived from the scenario when no
     tasks.yaml is supplied — so every lab has a usable prompt without one."""
@@ -248,7 +255,7 @@ def load_challenge(
     files = FileStore(seed=resources.get("files", {}))
     github = GithubStore(seed=resources.get("github", {}))
     trace = TraceLog()
-    model = ContextActionModel.from_yaml(env_dir / "plans.yaml")
+    model = ContextActionModel.from_yaml(_plans_path(challenge_dir, env_dir))
     constraints = Constraints(**spec.get("constraints", {}))
 
     slots = {

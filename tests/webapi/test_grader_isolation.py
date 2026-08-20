@@ -52,23 +52,23 @@ def _mgr(tmp_path, *, isolated):
 def test_isolated_session_omits_tests_and_solution(tmp_path):
     m = _mgr(tmp_path, isolated=True)
     root = m.path(m.create("DVAH-001")["session_id"])
-    assert (root / "vulnerable").is_dir()
+    assert (root / "guardrails" / "vulnerable").is_dir()
     assert (root / "scenario.yaml").exists()
-    assert not (root / "solution").exists()  # never in the learner's tree
-    assert not (root / "tests").exists()
+    assert not (root / "guardrails" / "solution").exists()  # never in the learner's tree
+    assert not (root / "evals").exists()
 
 
 def test_selfstudy_session_keeps_full_copy(tmp_path):
     m = _mgr(tmp_path, isolated=False)
     root = m.path(m.create("DVAH-001")["session_id"])
-    assert (root / "solution").is_dir() and (root / "tests").is_dir()
+    assert (root / "guardrails" / "solution").is_dir() and (root / "evals").is_dir()
 
 
 def test_learner_grader_workspace_never_contains_solution(tmp_path):
     source = catalog.resolve_challenge("DVAH-001")
     ws = assemble_workspace(source, tmp_path / "ws", code_dir=None, use_solution=False)
-    assert (ws / "vulnerable").is_dir() and (ws / "tests").is_dir()
-    assert not (ws / "solution").exists()  # solution absent even while learner code runs
+    assert (ws / "guardrails" / "vulnerable").is_dir() and (ws / "evals").is_dir()
+    assert not (ws / "guardrails" / "solution").exists()  # absent even while learner code runs
 
 
 def test_isolated_grade_vulnerable_red_reference_green(tmp_path):
@@ -87,7 +87,7 @@ def test_isolated_grade_vulnerable_red_reference_green(tmp_path):
 def test_isolated_patched_submission_goes_green(tmp_path):
     m = _mgr(tmp_path, isolated=True)
     sid = m.create("DVAH-001")["session_id"]
-    m.write_file(sid, "vulnerable/executor.py", _FIXED_EXECUTOR)
+    m.write_file(sid, "guardrails/vulnerable/executor.py", _FIXED_EXECUTOR)
     body = grade("DVAH-001", code_dir=m.code_dir(sid),
                  markers=["functional", "exploit", "invariant"], runner=_RUNNER)
     assert body["tests"] and all(t["outcome"] == "passed" for t in body["tests"]), body["stdout"]

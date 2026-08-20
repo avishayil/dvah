@@ -56,21 +56,21 @@ def walkthrough_steps(challenge_id: str) -> list[str]:
 def solution(challenge_id: str) -> dict:
     """Reveal solution files + a unified diff vs the original vulnerable code."""
     challenge_dir = catalog.resolve_challenge(challenge_id)
-    vuln = challenge_dir / "vulnerable"
-    sol = challenge_dir / "solution"
+    vuln = challenge_dir / "guardrails" / "vulnerable"
+    sol = challenge_dir / "guardrails" / "solution"
     files: list[dict] = []
     diff_parts: list[str] = []
     for sol_file in sorted(sol.glob("*.py")):
         if sol_file.name == "__init__.py":
             continue
-        files.append({"path": f"solution/{sol_file.name}", "contents": sol_file.read_text()})
+        files.append({"path": f"guardrails/solution/{sol_file.name}", "contents": sol_file.read_text()})
         vuln_file = vuln / sol_file.name
         before = vuln_file.read_text().splitlines(keepends=True) if vuln_file.exists() else []
         after = sol_file.read_text().splitlines(keepends=True)
         diff_parts.extend(
             difflib.unified_diff(
                 before, after,
-                fromfile=f"vulnerable/{sol_file.name}", tofile=f"solution/{sol_file.name}",
+                fromfile=f"guardrails/vulnerable/{sol_file.name}", tofile=f"guardrails/solution/{sol_file.name}",
             )
         )
     return {"files": files, "diff": "".join(diff_parts)}

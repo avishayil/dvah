@@ -8,9 +8,9 @@ model:
   provider: reactive
 
 overrides:
-  context_compiler: "vulnerable.compiler:CrossTenantMemoryCompiler"
+  context_compiler: "guardrails.vulnerable.compiler:CrossTenantMemoryCompiler"
 solution_overrides:
-  context_compiler: "solution.compiler:TenantMemoryCompiler"
+  context_compiler: "guardrails.solution.compiler:TenantMemoryCompiler"
 
 objective:
   exploit: >

@@ -45,7 +45,10 @@ GRADER_MODE = os.environ.get("DVAH_GRADER", "inprocess")
 # What an isolated learner session is allowed to contain — never tests/ or solution/.
 # ``skills``/``agents`` hold the file-based artifacts (SKILL.md, agents/*.md); they are
 # safe to copy (no secret material) and let the isolated session's loader parse them.
-_LEARNER_ONLY = ("vulnerable", "environment", "scenario.yaml", "skills", "agents")
+_LEARNER_ONLY = (
+    "guardrails/vulnerable",  # NOT the whole guardrails/ — solution/ must never be copied in
+    "environment", "scenario.yaml", "skills", "agents", "workflows", "resources", "prompts", "tools",
+)
 
 # A self-contained conftest for the session: binds the ``loaded`` fixture to THIS
 # challenge copy, so the sandboxed pytest run needs no ``--challenge`` option (avoiding
@@ -63,18 +66,19 @@ def loaded():
 
 
 def _editable_files(root: Path) -> list[dict]:
-    vuln = root / "vulnerable"
+    vuln = root / "guardrails" / "vulnerable"
     return [
-        {"path": f"vulnerable/{p.name}", "contents": p.read_text(), "writable": True}
+        {"path": f"guardrails/vulnerable/{p.name}", "contents": p.read_text(), "writable": True}
         for p in sorted(vuln.glob("*.py"))
         if p.name != "__init__.py"
     ]
 
 
 # Environment files opened READ-ONLY in the editor: the "world" the runtime runs against.
-# users/agents/plans are surfaced verbatim; resources.yaml is values-withheld (keys only)
-# so secret material never leaves the server — mirrors ``catalog._resource_summary``.
-_ENV_VERBATIM = ("users", "agents", "plans")
+# users/agents are surfaced verbatim; resources.yaml is values-withheld (keys only) so secret
+# material never leaves the server — mirrors ``catalog._resource_summary``. The scripted
+# workflow (plans.yaml) is surfaced separately from workflows/ (see below).
+_ENV_VERBATIM = ("users", "agents")
 _RESOURCES_HEADER = "# values withheld — secret material stays server-side\n"
 
 
@@ -100,6 +104,12 @@ def _readonly_files(root: Path) -> list[dict]:
             out.append(
                 {"path": f"environment/{name}.yaml", "contents": p.read_text(), "writable": False}
             )
+    plans = root / "workflows" / "plans.yaml"
+    if not plans.exists():
+        plans = env / "plans.yaml"
+    if plans.exists():
+        rel = plans.relative_to(root).as_posix()
+        out.append({"path": rel, "contents": plans.read_text(), "writable": False})
     res = env / "resources.yaml"
     if res.exists():
         out.append(
@@ -138,7 +148,9 @@ def _artifact_files(root: Path) -> list[dict]:
 
 
 def _tasks(root: Path) -> list[str]:
-    plans = root / "environment" / "plans.yaml"
+    plans = root / "workflows" / "plans.yaml"
+    if not plans.exists():
+        plans = root / "environment" / "plans.yaml"
     if not plans.exists():
         return []
     import yaml
@@ -269,8 +281,8 @@ class SessionManager:
         return self._isolated
 
     def code_dir(self, session_id: str) -> Path:
-        """The learner's editable ``vulnerable/`` dir — the code under test for grading."""
-        return self.path(session_id) / "vulnerable"
+        """The learner's editable ``guardrails/vulnerable/`` dir — the code under test."""
+        return self.path(session_id) / "guardrails" / "vulnerable"
 
     def files(self, session_id: str) -> list[dict]:
         return _editable_files(self.path(session_id))
@@ -283,11 +295,11 @@ class SessionManager:
         return _tasks(self.path(session_id))
 
     def resolve_writable(self, session_id: str, rel_path: str) -> Path:
-        """Resolve a client path to a file under the session's ``vulnerable/`` dir."""
+        """Resolve a client path to a file under the session's ``guardrails/vulnerable/`` dir."""
         root = self.path(session_id).resolve()
-        vuln = (root / "vulnerable").resolve()
+        vuln = (root / "guardrails" / "vulnerable").resolve()
         target = (root / rel_path).resolve()
-        # must stay under vulnerable/ and be a .py file (no traversal, no __init__ clobber)
+        # must stay under guardrails/vulnerable/ and be a .py file (no traversal, no __init__ clobber)
         if not str(target).startswith(str(vuln) + "/") or target.suffix != ".py":
             raise PermissionError(f"path not writable: {rel_path!r}")
         return target
@@ -299,8 +311,8 @@ class SessionManager:
     def reset(self, session_id: str) -> list[dict]:
         source = catalog.resolve_challenge(self.challenge_id(session_id))
         dest = self.path(session_id)
-        shutil.rmtree(dest / "vulnerable")
-        shutil.copytree(source / "vulnerable", dest / "vulnerable")
+        shutil.rmtree(dest / "guardrails" / "vulnerable")
+        shutil.copytree(source / "guardrails" / "vulnerable", dest / "guardrails" / "vulnerable")
         return _editable_files(dest)
 
     def cleanup(self, session_id: str) -> None:

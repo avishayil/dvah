@@ -84,7 +84,7 @@ class SubprocessRunner:
     def _command(self, session_dir: Path, markers: list[str], report: Path) -> list[str]:
         marker_expr = " or ".join(markers) if markers else "functional or exploit or invariant"
         return [
-            sys.executable, "-m", "pytest", "tests",
+            sys.executable, "-m", "pytest", "evals",
             "-m", marker_expr,
             "-p", "dvah.webapi._pytest_report", "-p", "no:cacheprovider",
             "--tb=line", "-q",

@@ -17,7 +17,7 @@ integration:
 labs:
 	@for dir in challenges/*/; do \
 		echo "=== $$dir ==="; \
-		uv run pytest "$$dir/tests" -q \
+		uv run pytest "$$dir/evals" -q \
 			-m "functional or exploit or invariant or adversarial" \
 			--challenge="$$dir" --solution || exit 1; \
 	done

@@ -17,13 +17,13 @@ def test_session_exposes_environment_as_readonly(tmp_path):
     # editable vulnerable file(s) are writable
     assert s["editable_files"]
     assert all(f["writable"] is True for f in s["editable_files"])
-    assert all(f["path"].startswith("vulnerable/") for f in s["editable_files"])
+    assert all(f["path"].startswith("guardrails/vulnerable/") for f in s["editable_files"])
 
     ro = {f["path"]: f for f in s["readonly_files"]}
-    # users/agents/plans surfaced verbatim; every readonly file flagged not writable
+    # users/agents surfaced verbatim + the scripted workflow (plans); all not writable
     assert "environment/users.yaml" in ro
     assert "environment/agents.yaml" in ro
-    assert "environment/plans.yaml" in ro
+    assert "workflows/plans.yaml" in ro
     assert all(f["writable"] is False for f in s["readonly_files"])
 
 

@@ -47,7 +47,9 @@ def test_agent_md_caps_match_agents_yaml_root(challenge_dir):
 def test_catalog_covers_every_operation_in_plans(challenge_dir):
     """Each namespace.action a lab's plans.yaml uses has a tool spec (except the internal
     ``agent`` meta-namespace, which the agent runtime handles, not a tool provider)."""
-    plans_path = challenge_dir / "environment" / "plans.yaml"
+    plans_path = challenge_dir / "workflows" / "plans.yaml"
+    if not plans_path.exists():
+        plans_path = challenge_dir / "environment" / "plans.yaml"
     plans = yaml.safe_load(plans_path.read_text()) or {}
     catalog = builtin_catalog()
     for steps in plans.values():

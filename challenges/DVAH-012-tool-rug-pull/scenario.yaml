@@ -8,9 +8,9 @@ model:
   provider: reactive
 
 overrides:
-  approvals: "vulnerable.approvals:PreDigestApprovalService"
+  approvals: "guardrails.vulnerable.approvals:PreDigestApprovalService"
 solution_overrides:
-  approvals: "solution.approvals:FixedApprovalService"
+  approvals: "guardrails.solution.approvals:FixedApprovalService"
 
 objective:
   exploit: >

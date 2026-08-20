@@ -61,7 +61,7 @@ def _print_ctf_briefing(challenge_dir: Path, spec: dict) -> None:
         path = challenge_dir / "environment" / f"{name}.yaml"
         if path.exists():
             console.print(f"  {path.relative_to(challenge_dir)}")
-    editable = sorted((challenge_dir / "vulnerable").glob("*.py"))
+    editable = sorted((challenge_dir / "guardrails" / "vulnerable").glob("*.py"))
     console.print("\n[bold]source to patch[/bold] (edit in place)")
     for f in editable:
         if f.name != "__init__.py":
@@ -80,7 +80,7 @@ def test(challenge: str, adversarial: bool = typer.Option(False, "--adversarial"
     if adversarial:
         markers += " or adversarial"
     code = pytest.main(
-        ["-q", str(challenge_dir / "tests"), "-m", markers, f"--challenge={challenge_dir}"]
+        ["-q", str(challenge_dir / "evals"), "-m", markers, f"--challenge={challenge_dir}"]
     )
     raise typer.Exit(code)
 
