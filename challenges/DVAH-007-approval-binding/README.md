@@ -4,12 +4,12 @@
 plan.
 
 ## The bug
-`vulnerable/approvals.py` issues a grant bound to a constant "plan id" and validates
+`guardrails/vulnerable/approvals.py` issues a grant bound to a constant "plan id" and validates
 any grant regardless of the action. An approval obtained for deleting `/tmp/old.log`
 is then reused to authorize deleting `/prod/customer.db`.
 
 ## Your job
-Bind each approval to the exact resolved action. The reference fix is in `solution/`.
+Bind each approval to the exact resolved action. The reference fix is in `guardrails/solution/`.
 
 ## Prove it
 ```

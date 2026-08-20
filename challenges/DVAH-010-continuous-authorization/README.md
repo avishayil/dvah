@@ -9,7 +9,7 @@ in the live revocation registry. A running task reads a scratch file (allowed) a
 tries to delete the production DB.
 
 ## The bug
-`vulnerable/policy.py` (`CachingPolicy`) authorizes the **first** resolved action and then
+`guardrails/vulnerable/policy.py` (`CachingPolicy`) authorizes the **first** resolved action and then
 reuses that decision for every later action — never re-checking the registry. Point-in-time
 authorization means a revocation issued mid-run never takes effect.
 

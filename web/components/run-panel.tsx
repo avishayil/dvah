@@ -52,7 +52,7 @@ function Summary({ result }: { result: RunResult }) {
     <div className="rounded border border-warn/40 bg-warn/10 p-2 text-xs text-warn">
       ⚠ Vulnerability reproduced — the attack still works. This is expected before you
       patch: open the <span className="text-fg">Trace</span> tab to see why, fix the code in{" "}
-      <span className="mono">vulnerable/</span>, then re-run until this turns green.
+      <span className="mono">guardrails/vulnerable/</span>, then re-run until this turns green.
     </div>
   );
 }
@@ -100,7 +100,7 @@ export function RunPanel({
           <p>
             Run <span className="text-accent">exploit</span> first — it should{" "}
             <span className="text-warn">fail</span>: that confirms the bug is live. Patch the
-            code in <span className="mono">vulnerable/</span>, then re-run{" "}
+            code in <span className="mono">guardrails/vulnerable/</span>, then re-run{" "}
             <span className="text-accent">invariant</span> and{" "}
             <span className="text-accent">adversarial</span> — your fix must make them{" "}
             <span className="text-allow">pass (green)</span> for <em>all</em> inputs, not just

@@ -25,14 +25,14 @@ keeps the approved digest but requests destructive powers
 (`github:repository.delete` / `files:*`). Requesting is not granting — the loader decides.
 
 ## The bug
-`vulnerable/skills.py` (`AutoAcceptSkillLoader`) grants **every** permission the upgraded
+`guardrails/vulnerable/skills.py` (`AutoAcceptSkillLoader`) grants **every** permission the upgraded
 manifest requests — ignoring the pinned digest and skipping the permission diff. The
 skill silently gains destructive capabilities its owner never approved.
 
 ## Your job
 Grant `requested ∩ approved`, only when the manifest digest matches the pinned one, and
 flag any requested permission beyond the approved set as `requires_reapproval`. The
-reference fix is in `solution/` (the `BuiltinSkillLoader` behavior).
+reference fix is in `guardrails/solution/` (the `BuiltinSkillLoader` behavior).
 
 ## Prove it
 ```

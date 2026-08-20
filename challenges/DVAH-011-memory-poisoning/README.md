@@ -9,7 +9,7 @@ benign preference. Two *other* tenants (`rival`, `rival2`) have planted notes th
 an action ("comment X on issue Y").
 
 ## The bug
-`vulnerable/compiler.py` (`CrossTenantMemoryCompiler`) recalls **every** tenant's memory
+`guardrails/vulnerable/compiler.py` (`CrossTenantMemoryCompiler`) recalls **every** tenant's memory
 and drops it into the **instruction** channel. The reactive model then obeys the planted
 action — cross-tenant memory poisoning.
 

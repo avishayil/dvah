@@ -4,12 +4,12 @@
 through every hop.
 
 ## The bug
-`vulnerable/provenance.py` drops the tag on `merge`, so after a tool call the agent no
+`guardrails/vulnerable/provenance.py` drops the tag on `merge`, so after a tool call the agent no
 longer knows where the data came from — any later policy decision that depends on
 provenance is now blind.
 
 ## Your job
-Preserve every provenance tag. The reference fix is in `solution/`.
+Preserve every provenance tag. The reference fix is in `guardrails/solution/`.
 
 ## Prove it
 ```

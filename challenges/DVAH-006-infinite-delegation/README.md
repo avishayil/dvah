@@ -4,13 +4,13 @@
 shared budget bounds the whole delegation tree.
 
 ## The bug
-`vulnerable/budget.py` keys the budget on a per-agent counter, which resets on every
+`guardrails/vulnerable/budget.py` keys the budget on a per-agent counter, which resets on every
 delegation. An agent can run unbounded work by spawning subagents, each handed a fresh
 allowance.
 
 ## Your job
 Enforce a single shared, decrementing budget across the entire delegation tree. The
-reference fix is in `solution/`.
+reference fix is in `guardrails/solution/`.
 
 ## Prove it
 ```

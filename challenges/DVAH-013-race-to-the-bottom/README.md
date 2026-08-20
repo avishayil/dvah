@@ -9,13 +9,13 @@ the concurrency deterministically (no real threads) with `InterleavingScheduler`
 forces the interleaving `check A → check B → commit A → commit B`.
 
 ## The bug
-`vulnerable/budget.py` (`RacyBudgetTracker`) checks the limit and commits the charge as
+`guardrails/vulnerable/budget.py` (`RacyBudgetTracker`) checks the limit and commits the charge as
 **two separate steps**. Interleaved, both agents' checks see room, so both commit — two
 actions run under a limit of one. Classic TOCTOU.
 
 ## Your job
 Make the charge **atomic**: check-and-increment in one indivisible operation, so the
-second attempt sees the first's effect and is denied. The reference fix is in `solution/`
+second attempt sees the first's effect and is denied. The reference fix is in `guardrails/solution/`
 (`AtomicBudgetTracker`, a single critical section).
 
 ## Prove it

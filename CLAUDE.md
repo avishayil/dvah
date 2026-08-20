@@ -20,10 +20,11 @@ authorization/approval/capabilities/provenance/secrets all bind to that envelope
 - `dvah/guardrails/` — first-class, **swappable** security services (policy, approvals,
   capabilities, budget, secrets, provenance, revocation, skills, decision); each is a
   `Protocol` + a correct `Builtin*` default. Challenges override these with broken versions.
-  (Renamed from `dvah/security/`, which stays as a re-export compat shim — to be removed later.)
+  (Renamed from `dvah/security/`, which has been removed — `dvah/guardrails/` is the only path now.)
 - `dvah/memory/` — agent memory (`store.py`; reference Memory layer). World state lives in
-  `dvah/services/world_state.py` (FileStore/GithubStore). Both keep compat shims at their old
-  paths (`dvah/services/memory_store.py`, etc.).
+  `dvah/services/world_state.py` (FileStore/GithubStore). The old compat shims
+  (`dvah/services/memory.py`, `dvah/services/memory_store.py`) have been removed — those
+  import paths no longer exist.
 - `dvah/resources/`, `dvah/workflows/`, `dvah/prompts/` — thin domain homes over the new
   `Resource`/`Workflow`/`PromptStack` models + parsers; `dvah/schemas/` is a dependency-free
   output-schema validator. All advisory — never reaches `action_hash`.
@@ -62,16 +63,20 @@ authorization/approval/capabilities/provenance/secrets all bind to that envelope
 - `dvah/grading/` — out-of-process grading. `DVAH_GRADER` selects the mode: `inprocess`
   (default, self-study; full copy), `isolated` (assessment; learner session is
   vulnerable-only, graded in a throwaway workspace), or `rpc` (fullest split; learner code
-  runs in a separate `AdapterServer` process with no tests/solution, grader drives the
+  runs in a separate `AdapterServer` process with no evals/solution, grader drives the
   invariant battery over stdio via `RpcAdapter`). See `docs/ARCHITECTURE.md`.
 - `dvah/scenarios/loader.py` + `catalog.py` — load a challenge into a runnable harness by
-  swapping named slots with the challenge's `vulnerable/` or `solution/` code. The
+  swapping named slots with the challenge's `guardrails/vulnerable/` or
+  `guardrails/solution/` code (slot refs are `guardrails.vulnerable.*` /
+  `guardrails.solution.*`). The
   `LoadedChallenge` also exposes `.skills` (role/name → `SkillManifest`), `.agent_defs`
   (agent_id → `AgentDefinition`), `.tools_catalog` (id → `ToolSpec`), `.resources` (id →
   `Resource`), `.workflows` (task_id → descriptive `Workflow`), and `.prompts` (agent_id →
   `PromptStack`), parsed from the file-based artifacts below.
-- `challenges/DVAH-00N-*/` — the labs (`scenario.yaml`, `README.md`, `vulnerable/`, hidden
-  `solution/`, `environment/*.yaml`, `tests/`, `walkthrough.yaml`).
+- `challenges/DVAH-00N-*/` — the labs, in the reference layout (`scenario.yaml`,
+  `README.md`, `guardrails/vulnerable/`, hidden `guardrails/solution/`, `evals/`,
+  `workflows/plans.yaml`, `environment/{users,agents,resources}.yaml`, `agents/<root>.md`,
+  `prompts/system.md`, optional `skills/`, `walkthrough.yaml`).
 - `services/` — FastAPI mock external systems; `web/` — Next.js browser IDE.
 
 ## Commands
@@ -111,19 +116,24 @@ docker compose --profile services up --build            # + mock services :8001-
 
 ## Adding a lab (pattern)
 
-1. Copy the DVAH-001/002 shape: `scenario.yaml` (declare `overrides` +
-   `solution_overrides` for the one broken slot + its declared `invariants`), `README.md`,
-   `vulnerable/`, `solution/`, `environment/{users,agents,resources,plans}.yaml`, and
-   `tests/{test_functional,test_exploit,test_invariants,test_adversarial}.py`. Every lab now
-   also ships an authored `agents/<root>.md` (AgentDefinition — frontmatter
-   name/description/model/tools/capabilities/delegation + system-prompt body) and a
-   `prompts/system.md` base instruction layer as standard; DVAH-009 additionally ships a
-   `skills/` package (`SKILL.md` + `registry.yaml`).
+1. Copy the DVAH-001/002 shape (the reference layout):
+   - `scenario.yaml` — declare `overrides` + `solution_overrides` for the one broken slot
+     (slot refs are `guardrails.vulnerable.*` / `guardrails.solution.*`) + its declared
+     `invariants`.
+   - `guardrails/vulnerable/` (shipped) and `guardrails/solution/` (hidden reference).
+   - `evals/{test_functional,test_exploit,test_invariants,test_adversarial}.py`.
+   - `workflows/plans.yaml` — the deterministic fixture the CI oracle replays.
+   - `environment/{users,agents,resources}.yaml` — the world files.
+   - `agents/<root>.md` (AgentDefinition — frontmatter
+     name/description/model/tools/capabilities/delegation + system-prompt body) and a
+     `prompts/system.md` base instruction layer, both standard on every lab.
+   - Optional: `skills/` (`SKILL.md` + `registry.yaml`; DVAH-009 ships one),
+     `tools/tools.yaml`, and a `resources/` dir.
 2. Author `walkthrough.yaml` (tiers nudge→concept→pointer→solution + guided `steps`).
 3. Verify: vulnerable = red on exploit+invariant(+adversarial), `--solution` = all green.
 
 **Scenario as a world (v0.3, all optional/additive):** a lab describes a *world + goal*,
-not only a script. `environment/*.yaml` seeds the world; `plans.yaml` is the
+not only a script. `environment/*.yaml` seeds the world; `workflows/plans.yaml` is the
 **deterministic fixture** the CI oracle (`ScriptedSession`) replays — keep it as-is.
 Optionally add:
 - `environment/tasks.yaml` — real goal prompts keyed by the same `task_id` as `plans.yaml`
@@ -144,7 +154,7 @@ Optionally add:
   declare agents as `agents/<id>.md` (Claude Code subagent frontmatter + system-prompt body).
   These parse into `loaded.skills` / `loaded.agent_defs` via `dvah/artifacts/`; the tool
   catalog defaults to `builtin_catalog()` and can be overlaid per-lab with
-  `environment/tools.yaml`. All of it is advisory metadata for the live/subagent path.
+  `tools/tools.yaml`. All of it is advisory metadata for the live/subagent path.
 
 ## Gotchas
 

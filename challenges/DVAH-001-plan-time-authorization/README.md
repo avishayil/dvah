@@ -8,17 +8,17 @@
 deletes `/prod/customer.db` (which it has no capability to do).
 
 ## The bug
-`vulnerable/executor.py` authorizes the **first** plan step once, then executes every
+`guardrails/vulnerable/executor.py` authorizes the **first** plan step once, then executes every
 remaining step directly against the tools — bypassing the per-action gate. The delete
 runs even though it would be denied if checked at execution time.
 
 ## Your job
 Make the executor authorize each resolved action just before it executes. The
-reference fix lives in `solution/` (route every step through `harness.broker.run_step`).
+reference fix lives in `guardrails/solution/` (route every step through `harness.broker.run_step`).
 
 ## Prove it
 ```
-dvah test DVAH-001              # against your patched vulnerable/ code
+dvah test DVAH-001              # against your patched guardrails/vulnerable/ code
 dvah test DVAH-001 --adversarial
 ```
 Exploit and invariant tests pass only when the delete is blocked at execution time and

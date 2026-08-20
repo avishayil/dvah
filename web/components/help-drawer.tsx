@@ -104,7 +104,7 @@ export function HelpDrawer({
             <ListChecks size={13} /> Guided walkthrough
           </h3>
           <p className="mb-2 rounded border border-border bg-panel-2 p-2 text-xs text-muted">
-            You edit the <span className="mono text-accent">vulnerable/…</span> file (the accent
+            You edit the <span className="mono text-accent">guardrails/vulnerable/…</span> file (the accent
             tab). The lock-badged tabs are read-only <span className="text-fg">environment</span>{" "}
             files — users, agents, resources, plans — describing the world the runtime runs
             against; you read them for context, you don&apos;t change them.

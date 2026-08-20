@@ -178,9 +178,9 @@ framework cross-refs: [`docs/STANDARDS-MAPPING.md`](./docs/STANDARDS-MAPPING.md)
 | DVAH-013 | Race to the Bottom | INV-12 |
 | DVAH-014 | The Unbounded Tool Server | INV-14 |
 
-Each lab ships a `vulnerable/` slot you patch in place, a hidden reference `solution/`,
-authored tiered hints + a guided walkthrough (`walkthrough.yaml`), and
-functional/exploit/invariant/**adversarial** test suites.
+Each lab ships a `guardrails/vulnerable/` slot you patch in place, a hidden reference
+`guardrails/solution/`, authored tiered hints + a guided walkthrough (`walkthrough.yaml`),
+and functional/exploit/invariant/**adversarial** eval suites (`evals/`).
 
 New to this? The **Learn** page opens with a plain-English "what is an agent harness?"
 explainer, and DVAH-001 has a hands-off **guided demo** (`/labs/DVAH-001-plan-time-authorization?mode=learn&demo=1`)
@@ -198,11 +198,12 @@ with `cd web && npm run capture:demo` (writes `web/public/demo/` + mirrors to `s
 dvah/            # the harness package
   models/        # frozen data (ActionEnvelope + parts; Resource, Workflow, PromptStack)
   guardrails/    # first-class swappable security services (policy, approvals, caps, …)
-                 #   (renamed from security/, which stays as a compat shim)
+                 #   (renamed from security/; the old shim is removed — guardrails/ only)
   harness/       # runtime plumbing: broker gate, executor, delegation, context
-  memory/        # agent memory (reference Memory layer); world state → services/world_state.py
+  memory/        # agent memory (store.py; reference Memory layer); world state → services/world_state.py
+                 #   (the old services/memory{,_store}.py shims are removed)
   resources/     # Resource domain home (MCP-style read-only knowledge, untrusted-by-default)
-  workflows/     # descriptive Workflow model over plans.yaml (not executed)
+  workflows/     # descriptive Workflow model over workflows/plans.yaml (not executed)
   prompts/       # layered prompt stacks (system → agent → skill → task)
   schemas/       # dependency-free output-schema validator
   providers/     # model + tool providers (deterministic, anthropic, openai, bedrock, http)
@@ -211,8 +212,9 @@ dvah/            # the harness package
   mutation/      # the chaos engine (invariant-defeat probes)
   webapi/        # FastAPI app wrapping the harness for the web UI
   cli.py         # dvah list|start|test|trace|mutate
-challenges/      # the labs (vulnerable/ + hidden solution/ + tests/ + walkthrough.yaml;
-                 #   each also ships agents/<root>.md + prompts/system.md)
+challenges/      # the labs, reference layout: guardrails/{vulnerable,solution}/ + evals/
+                 #   + workflows/plans.yaml + environment/{users,agents,resources}.yaml
+                 #   + agents/<root>.md + prompts/system.md + walkthrough.yaml (DVAH-009: skills/)
 services/        # FastAPI mock external systems (files/github/email/cloud)
 web/             # Next.js browser IDE
 docs/            # architecture, invariants, standards mapping

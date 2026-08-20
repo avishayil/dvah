@@ -23,12 +23,12 @@ User → Planner(Model) → Plan(proposal, NO authority)
 - `dvah/guardrails/` — first-class, swappable security services (policy, approvals,
   capabilities, budget, secrets, provenance, revocation, skills, decision). Each is a
   `Protocol` plus a correct default (`Builtin*`). Challenges override these with broken
-  versions. (Renamed from `dvah/security/`, which now re-exports it via a compat shim —
-  see "Reference architecture (overlay)" below.)
+  versions. (Renamed from `dvah/security/`, which has been removed — `dvah/guardrails/`
+  is the only path now. See "Reference architecture (overlay)" below.)
 - `dvah/harness/` — runtime plumbing: `resolver`, `broker` (the gate), `agent`
   (delegation), swappable `executor`, `Harness` driver, `RunContext`.
-- `dvah/memory/` — agent memory (the reference Memory/State layer; moved from
-  `dvah/services/memory_store.py`, which keeps a compat shim).
+- `dvah/memory/store.py` — agent memory (the reference Memory/State layer; moved from
+  `dvah/services/memory_store.py`, which has been removed).
 - `dvah/resources/`, `dvah/workflows/`, `dvah/prompts/`, `dvah/schemas/` — thin domain
   homes over the new models + parsers (see the overlay section).
 - `dvah/providers/` — the model seam (`ModelProvider.complete` one-shot, plus the
@@ -38,9 +38,15 @@ User → Planner(Model) → Plan(proposal, NO authority)
 - `dvah/services/` + top-level `services/` — in-memory stores and their FastAPI
   front-ends (identical behavior across transports; parity tested).
 - `dvah/scenarios/loader.py` — turns a `scenario.yaml` into a runnable `Harness` by
-  swapping named slots with the challenge's `vulnerable/` or `solution/` code.
-- `challenges/DVAH-00N-*/` — labs. `vulnerable/` is shipped; `solution/` is the hidden
-  reference; `tests/` holds functional/exploit/invariant(/adversarial) suites.
+  swapping named slots with the challenge's `guardrails/vulnerable/` or
+  `guardrails/solution/` code (slot refs are `guardrails.vulnerable.*` /
+  `guardrails.solution.*`).
+- `challenges/DVAH-00N-*/` — labs, in the reference layout:
+  `guardrails/vulnerable/` is shipped and `guardrails/solution/` is the hidden reference;
+  `evals/` holds the functional/exploit/invariant(/adversarial) suites;
+  `workflows/plans.yaml` is the deterministic fixture; `environment/` holds
+  `users.yaml`, `agents.yaml` (and `resources.yaml` where present); plus the authored
+  `agents/<root>.md`, `prompts/system.md`, and (DVAH-009 only) `skills/`.
 
 ## Why harness/ and guardrails/ are split
 
@@ -74,10 +80,12 @@ naming and legibility, never a new authorization path: all of its metadata is ad
 | **Evals** | the per-lab test suites + the conformance battery (`docs/CONFORMANCE.md`) |
 | **Identity** | `dvah/models/identity.py` (`ModelIdentity`) + the envelope's actor/agent/delegation chain |
 
-**Renames + compat shims (done).** The security services were renamed
-`dvah/security/` → `dvah/guardrails/`; `dvah/security/` remains as a re-export shim (to be
-removed later). Agent memory moved to `dvah/memory/store.py` and world state to
-`dvah/services/world_state.py`, both with shims at the old paths (`dvah/services/memory_store.py`).
+**Renames + shim removal (done).** The security services were renamed
+`dvah/security/` → `dvah/guardrails/`, agent memory moved to `dvah/memory/store.py`, and
+world state to `dvah/services/world_state.py`. The transitional compat shims
+(`dvah/security/`, `dvah/services/memory.py`, `dvah/services/memory_store.py`) have been
+**removed** — those import paths no longer exist; `dvah/guardrails/` and `dvah/memory/`
+are the only paths now.
 
 **New reference-primitive models + domain packages.** `dvah/models/` gained `resource.py`
 (`Resource`), `workflow.py` (`Workflow`/`WorkflowStep`/`StepKind`/`Driver`, descriptive only),
@@ -106,11 +114,15 @@ a `prompts/system.md` base instruction layer; DVAH-009 also ships a `skills/` pa
 `action_hash` characterization test (`tests/integration/test_golden_hashes.py`) guards that
 none of this perturbs the hash.
 
-> **Intended / not yet done.** The per-lab physical relocation of `vulnerable/` →
-> `guardrails/vulnerable/`, `solution/` → `guardrails/solution/`, `tests/` → `evals/`, and
-> `environment/plans.yaml` → `workflows/plans.yaml` is **deferred** (it threads the grading
-> trust-domain isolation). On disk today the lab dirs are still `vulnerable/`, `solution/`,
-> `tests/`, and `environment/plans.yaml`.
+**Per-lab relocation (done).** The physical relocation of every lab to the reference
+layout is complete: `vulnerable/` → `guardrails/vulnerable/`, `solution/` →
+`guardrails/solution/`, `tests/` → `evals/`, and `environment/plans.yaml` →
+`workflows/plans.yaml`. `environment/` now holds only the world files
+(`users.yaml`, `agents.yaml`, and `resources.yaml` where present). `scenario.yaml` slot
+refs are `guardrails.vulnerable.*` / `guardrails.solution.*`, and `dvah test` / `make labs`
+run `evals/`. Grading assembly still copies only **one** of `guardrails/{vulnerable,solution}`
+into a workspace, so the two trust domains never coexist, and the golden `action_hash`
+characterization test confirms the move is byte-identical.
 
 ## The agent loop (ModelSession → ModelTurn)
 
@@ -160,8 +172,9 @@ the child starts, and the `run_step` gate is unchanged.
 A challenge describes a **world + goal**, layered so the deterministic oracle stays
 authoritative:
 
-- `environment/{users,agents,resources}.yaml` seed the simulated world; `plans.yaml` is
-  the **deterministic fixture** the `ScriptedSession` replays (unchanged).
+- `environment/{users,agents,resources}.yaml` seed the simulated world;
+  `workflows/plans.yaml` is the **deterministic fixture** the `ScriptedSession` replays
+  (unchanged).
 - `environment/tasks.yaml` (optional) declares the real **goal prompt** per `task_id`
   (`{task_id: {prompt, agent?}}`) — what a *live* model receives for that task. The
   deterministic path never reads it; if absent, a default is derived from
@@ -305,7 +318,7 @@ sets expectations without making the security verdict depend on any model.
 
 All read-only context lives in the editor as grouped, lock-badged tabs — never on the side —
 so it's obvious what each file is and that you only edit one of them. `web/components/editor-panel.tsx`
-groups tabs into **Patch this** (the editable `vulnerable/*.py`, accent-highlighted), **The world ·
+groups tabs into **Patch this** (the editable `guardrails/vulnerable/*.py`, accent-highlighted), **The world ·
 read-only** (the `environment/*.yaml` the runtime runs against), and **Harness reference · read-only**
 (the `dvah.*` modules the code imports — the challenge briefing's `references`, merged in from the
 challenge detail). The harness-reference group is collapsed by default behind a "Reference files"
@@ -329,21 +342,23 @@ The web UI runs learner-edited code, so *where* the hidden tests and reference s
 live matters. Two modes (`DVAH_GRADER`):
 
 - **`inprocess`** (default, self-study) — the session is a full copy of the challenge
-  (`vulnerable/` + `tests/` + `solution/`); the suite runs in place. Fast, but the
-  solution is on disk (only hidden from the file API), so learner-executed code could
-  read it. Fine for local single-user practice.
-- **`isolated`** (assessment/CTF) — the learner session contains **only** `vulnerable/`
-  (+ `environment/` + `scenario.yaml`); it has neither `tests/` nor `solution/`. Grading
+  (`guardrails/vulnerable/` + `evals/` + `guardrails/solution/`); the suite runs in place.
+  Fast, but the solution is on disk (only hidden from the file API), so learner-executed
+  code could read it. Fine for local single-user practice.
+- **`isolated`** (assessment/CTF) — the learner session contains **only**
+  `guardrails/vulnerable/` (+ `environment/` + `workflows/` + `scenario.yaml`); it has
+  neither `evals/` nor `guardrails/solution/`. Grading
   happens out of band (`dvah/grading/`): a throwaway workspace is assembled from the
   *pristine* challenge tests plus the code under test, run through the same sandboxed
-  runner (`DockerRunner` recommended). The reference `solution/` is copied in **only** for
-  explicit `--solution` reference runs, so it never coexists with learner-controlled code.
+  runner (`DockerRunner` recommended). The reference `guardrails/solution/` is copied in
+  **only** for explicit `--solution` reference runs, so it never coexists with
+  learner-controlled code.
 
 - **`rpc`** (fullest split) — closes the one residual of `isolated`: there, the learner's
-  code still executes in the *same interpreter* as the hidden `tests/` during grading. In
+  code still executes in the *same interpreter* as the hidden `evals/` during grading. In
   `rpc` mode the learner's harness runs in a **separate process** (`dvah/grading/rpc.py`
   `AdapterServer`, started via `python -m dvah.grading.rpc <workspace>`) whose workspace has
-  **no `tests/` and no `solution/`** at all; the grader process drives the invariant battery
+  **no `evals/` and no `guardrails/solution/`** at all; the grader process drives the invariant battery
   (`run_battery`) against an `RpcAdapter` that marshals each `HarnessAdapter` call over stdio
   JSON. So the hidden assertions live only in the grader — the learner's code never sees the
   tests or the solution. This grades the invariant **security oracle** (per-invariant
