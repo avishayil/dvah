@@ -3,7 +3,7 @@
 import pytest
 
 from dvah.models.capability import Capability, CapabilitySet
-from dvah.security.decision import Denied
+from dvah.guardrails.decision import Denied
 
 pytestmark = pytest.mark.integration
 

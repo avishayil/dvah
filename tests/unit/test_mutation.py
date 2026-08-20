@@ -3,7 +3,7 @@ import pytest
 from dvah.mutation import broken
 from dvah.mutation.engine import apply, choose_flags
 from dvah.mutation.flags import ALL_FLAGS, FLAG_TO_INV, FLAG_TO_SLOT, MutationFlags
-from dvah.security.secrets import BuiltinSecretBroker
+from dvah.guardrails.secrets import BuiltinSecretBroker
 
 
 @pytest.mark.unit

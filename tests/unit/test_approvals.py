@@ -1,7 +1,7 @@
 import pytest
 
 from dvah.models.operation import Operation
-from dvah.security.approvals import BuiltinApprovalService
+from dvah.guardrails.approvals import BuiltinApprovalService
 
 pytestmark = pytest.mark.unit
 

@@ -9,7 +9,7 @@ import pytest
 from dvah.models.operation import Operation
 from dvah.providers.http_tools import HttpToolProvider
 from dvah.providers.native_tools import NativeToolProvider
-from dvah.services.memory import FileStore, GithubStore
+from dvah.services.world_state import FileStore, GithubStore
 
 pytestmark = pytest.mark.e2e
 

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from dvah.security.policy import BuiltinPolicy
-from dvah.security.revocation import RevocationRegistry
+from dvah.guardrails.policy import BuiltinPolicy
+from dvah.guardrails.revocation import RevocationRegistry
 
 
 class RevokedActionPolicy:

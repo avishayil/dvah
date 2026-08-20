@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dvah.security.approvals import BuiltinApprovalService
+from dvah.guardrails.approvals import BuiltinApprovalService
 
 
 class FixedApprovalService(BuiltinApprovalService):

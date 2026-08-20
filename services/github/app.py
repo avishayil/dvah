@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from fastapi import Query, Request
 
-from dvah.services.memory import GithubStore
+from dvah.services.world_state import GithubStore
 from services.common.app_factory import create_service
 
 store = GithubStore()

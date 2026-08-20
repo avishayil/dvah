@@ -2,7 +2,7 @@ import pytest
 
 from dvah.harness.resolver import build_envelope
 from dvah.models.operation import Operation
-from dvah.security.decision import Verdict
+from dvah.guardrails.decision import Verdict
 
 
 @pytest.mark.invariant("INV-13")

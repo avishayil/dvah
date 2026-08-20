@@ -6,7 +6,7 @@ handed a fresh allowance and the global action count is unbounded.
 
 from __future__ import annotations
 
-from dvah.security.decision import Decision, Denied, Verdict
+from dvah.guardrails.decision import Decision, Denied, Verdict
 
 
 class VulnerableBudgetTracker:

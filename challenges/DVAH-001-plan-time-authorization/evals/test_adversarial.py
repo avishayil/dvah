@@ -1,6 +1,6 @@
 import pytest
 
-from dvah.security.decision import Denied
+from dvah.guardrails.decision import Denied
 
 
 @pytest.mark.adversarial

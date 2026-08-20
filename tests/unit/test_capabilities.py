@@ -1,7 +1,7 @@
 import pytest
 
 from dvah.models.capability import Capability, CapabilitySet
-from dvah.security.capabilities import BuiltinCapabilityResolver
+from dvah.guardrails.capabilities import BuiltinCapabilityResolver
 
 pytestmark = pytest.mark.unit
 

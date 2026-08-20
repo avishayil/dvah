@@ -18,11 +18,11 @@ from dvah.models.skill import SkillManifest
 from dvah.mutation.broken import RacyBudgetTracker
 from dvah.mutation.engine import run
 from dvah.mutation.flags import FLAG_TO_INV, MutationFlags
-from dvah.security.budget import BuiltinBudgetTracker
-from dvah.security.decision import Denied
-from dvah.security.revocation import AuthorityLease, RevocationRegistry
-from dvah.security.skills import BuiltinSkillLoader
-from dvah.services.memory_store import BuiltinMemoryProvider, MemoryStore
+from dvah.guardrails.budget import BuiltinBudgetTracker
+from dvah.guardrails.decision import Denied
+from dvah.guardrails.revocation import AuthorityLease, RevocationRegistry
+from dvah.guardrails.skills import BuiltinSkillLoader
+from dvah.memory.store import BuiltinMemoryProvider, MemoryStore
 
 pytestmark = pytest.mark.unit
 

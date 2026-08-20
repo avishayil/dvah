@@ -9,7 +9,7 @@ from rich.console import Console
 
 from dvah.observability.render import render_trace, summarize_trace
 from dvah.scenarios.loader import load_challenge
-from dvah.security.decision import Denied
+from dvah.guardrails.decision import Denied
 
 pytestmark = pytest.mark.integration
 

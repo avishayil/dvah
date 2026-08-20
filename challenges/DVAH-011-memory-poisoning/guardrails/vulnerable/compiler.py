@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from dvah.harness.compiler import DATA, INSTRUCTION, CompiledContext, ContextItem
 from dvah.models.provenance import TrustLevel
-from dvah.services.memory_store import MemoryStore
+from dvah.memory.store import MemoryStore
 
 # Current tenant (acme) + two hostile tenants that planted an action in their notes.
 MEMORY_SEED = {

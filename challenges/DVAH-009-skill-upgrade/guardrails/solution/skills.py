@@ -6,7 +6,7 @@ permission beyond the approved set is reported and requires re-approval.
 
 from __future__ import annotations
 
-from dvah.security.skills import BuiltinSkillLoader
+from dvah.guardrails.skills import BuiltinSkillLoader
 
 
 class PinnedSkillLoader(BuiltinSkillLoader):

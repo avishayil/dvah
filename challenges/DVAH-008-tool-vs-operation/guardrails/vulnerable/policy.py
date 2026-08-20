@@ -6,7 +6,7 @@ namespace is allowed — and the approval requirement is skipped entirely.
 
 from __future__ import annotations
 
-from dvah.security.decision import Decision, Verdict
+from dvah.guardrails.decision import Decision, Verdict
 
 
 class ToolNamePolicy:

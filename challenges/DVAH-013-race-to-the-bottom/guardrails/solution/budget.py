@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import threading
 
-from dvah.security.decision import Decision, Denied, Verdict
+from dvah.guardrails.decision import Decision, Denied, Verdict
 
 
 class AtomicBudgetTracker:

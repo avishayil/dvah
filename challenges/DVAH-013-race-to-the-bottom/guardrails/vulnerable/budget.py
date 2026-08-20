@@ -7,7 +7,7 @@ commit and an extra action slips past the limit.
 
 from __future__ import annotations
 
-from dvah.security.decision import Decision, Denied, Verdict
+from dvah.guardrails.decision import Decision, Denied, Verdict
 
 
 class RacyBudgetTracker:

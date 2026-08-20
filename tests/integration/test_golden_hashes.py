@@ -19,7 +19,7 @@ import yaml
 
 from dvah.scenarios.catalog import scenario_dirs
 from dvah.scenarios.loader import load_challenge
-from dvah.security.decision import Denied
+from dvah.guardrails.decision import Denied
 
 # lab dir name -> {task_id: sha256(action_hash sequence)[:16]}
 GOLDEN = {

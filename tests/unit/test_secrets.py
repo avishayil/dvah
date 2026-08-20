@@ -1,7 +1,7 @@
 import pytest
 
 from dvah.models.operation import Operation
-from dvah.security.secrets import BuiltinSecretBroker
+from dvah.guardrails.secrets import BuiltinSecretBroker
 
 pytestmark = pytest.mark.unit
 

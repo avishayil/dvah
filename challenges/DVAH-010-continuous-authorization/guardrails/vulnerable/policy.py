@@ -6,7 +6,7 @@ action, so authority is never re-validated — a revocation issued mid-run is ig
 
 from __future__ import annotations
 
-from dvah.security.policy import BuiltinPolicy
+from dvah.guardrails.policy import BuiltinPolicy
 
 
 class CachingPolicy:

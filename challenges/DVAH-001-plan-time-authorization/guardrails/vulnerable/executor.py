@@ -8,7 +8,7 @@ so a capability the agent does not hold is exercised anyway. Note it still emits
 from __future__ import annotations
 
 from dvah.harness.resolver import build_envelope, resolve_operation
-from dvah.security.decision import Denied, Verdict
+from dvah.guardrails.decision import Denied, Verdict
 
 
 class VulnerableExecutor:
