@@ -19,6 +19,10 @@ class PolicyEngine(Protocol):
 
 
 #: Operations that require an explicit human approval even when capabilities permit.
+#: This frozen constant is the authoritative input to the gate. The tool catalog mirrors it
+#: via ``requires_approval`` (human-facing source of truth); a unit test pins the two equal so
+#: they can never silently diverge — but the constant, not the catalog, drives authorization
+#: (keeps the deterministic verdict independent of advisory metadata).
 DEFAULT_APPROVAL_ACTIONS: frozenset[tuple[str, str]] = frozenset(
     {
         ("files", "delete"),
@@ -27,6 +31,16 @@ DEFAULT_APPROVAL_ACTIONS: frozenset[tuple[str, str]] = frozenset(
         ("email", "send"),
     }
 )
+
+
+def approval_actions_from_catalog(catalog) -> frozenset[tuple[str, str]]:
+    """Derive the approval set from a ``{id: ToolSpec}`` catalog's ``requires_approval`` flags.
+
+    Human-facing view of what needs approval; bound to ``DEFAULT_APPROVAL_ACTIONS`` by a test.
+    """
+    return frozenset(
+        (spec.namespace, spec.action) for spec in catalog.values() if spec.requires_approval
+    )
 
 
 class BuiltinPolicy:

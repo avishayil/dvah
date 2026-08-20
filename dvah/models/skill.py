@@ -32,6 +32,11 @@ class SkillManifest(BaseModel):
     instructions: str = ""
     #: Tool/operation identifiers the skill contributes (e.g. "github.issue.comment").
     tools: tuple[str, ...] = ()
+    #: Resource ids the skill bundles (read-only knowledge) — completes the skill-as-package
+    #: shape {instructions + resources + tools + schemas}. Advisory.
+    resources: tuple[str, ...] = ()
+    #: Output/tool schema ids the skill ships. Advisory.
+    schemas: tuple[str, ...] = ()
     #: Declared runtime requirements (surfaced for review; not auto-granted).
     mcp: tuple[str, ...] = ()
     network: tuple[str, ...] = ()
