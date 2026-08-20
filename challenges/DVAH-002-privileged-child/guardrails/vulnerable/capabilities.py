@@ -7,6 +7,6 @@ strictly more privileged than the agent that spawned it.
 from __future__ import annotations
 
 
-class VulnerableCapabilityResolver:
+class WideningCapabilityResolver:
     def derive_child(self, requested, parent, policy):
         return policy  # BUG: ignores parent and requested — no attenuation

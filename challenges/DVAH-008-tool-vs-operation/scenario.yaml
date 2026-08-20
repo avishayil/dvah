@@ -10,7 +10,7 @@ model:
 overrides:
   policy: "guardrails.vulnerable.policy:ToolNamePolicy"
 solution_overrides:
-  policy: "guardrails.solution.policy:FixedPolicy"
+  policy: "guardrails.solution.policy:OperationScopedPolicy"
 
 objective:
   exploit: >

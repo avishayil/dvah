@@ -32,6 +32,16 @@ def _from_world_seed(seed: dict) -> dict[str, Resource]:
         resources[rid] = Resource(id=rid, name=repo, uri=rid,
                                   description="GitHub repository issues (untrusted content)",
                                   mime_type="application/json", trust=TrustLevel.UNTRUSTED_DATA)
+    # Any other seeded namespace (e.g. DVAH-014's `egress` hosts) becomes an advisory
+    # Resource too, so the knowledge view is uniform across labs. Secrets are NEVER
+    # exposed as Resources — credentials stay off the knowledge path (INV-04).
+    for namespace, entries in seed.items():
+        if namespace in ("files", "github", "secrets"):
+            continue
+        for key, value in (entries or {}).items() if isinstance(entries, dict) else []:
+            rid = f"{namespace}://{key}"
+            resources[rid] = Resource(id=rid, name=key, uri=rid, content=str(value),
+                                      mime_type="text/plain", trust=TrustLevel.UNTRUSTED_DATA)
     return resources
 
 

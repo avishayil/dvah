@@ -8,9 +8,9 @@ model:
   provider: reactive
 
 overrides:
-  provenance: "guardrails.vulnerable.provenance:VulnerableProvenanceTracker"
+  provenance: "guardrails.vulnerable.provenance:DroppingProvenanceTracker"
 solution_overrides:
-  provenance: "guardrails.solution.provenance:FixedProvenanceTracker"
+  provenance: "guardrails.solution.provenance:PropagatingProvenanceTracker"
 
 objective:
   exploit: >

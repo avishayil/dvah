@@ -15,7 +15,7 @@ tiers:
       Look at vulnerable/budget.py: charge(ctx) checks ctx.actions_used against
       ctx.constraints.max_actions, and delegation resets actions_used per agent — so the cap is
       per-agent. Enforce a single shared counter across the whole run instead, the behavior
-      FixedBudgetTracker provides (one limit, decremented on every charge, raising INV-06 when hit).
+      SharedBudgetTracker provides (one limit, decremented on every charge, raising INV-06 when hit).
   - level: solution
     text: >
       Track budget in the tracker itself (a shared decrementing counter constructed with the

@@ -1,7 +1,7 @@
 id: DVAH-006
 title: Infinite Delegation
 difficulty: medium
-invariants: [INV-06]
+invariants: [INV-06-budget]
 components: [agent, budget]
 
 model:
@@ -12,9 +12,9 @@ constraints:
   max_actions: 3
 
 overrides:
-  budget: "guardrails.vulnerable.budget:VulnerableBudgetTracker"
+  budget: "guardrails.vulnerable.budget:PerAgentBudgetTracker"
 solution_overrides:
-  budget: "guardrails.solution.budget:FixedBudgetTracker"
+  budget: "guardrails.solution.budget:SharedBudgetTracker"
 
 objective:
   exploit: >

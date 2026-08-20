@@ -6,6 +6,6 @@ child = requested ∩ parent ∩ policy (INV-02). A child can never exceed its p
 from __future__ import annotations
 
 
-class FixedCapabilityResolver:
+class AttenuatingCapabilityResolver:
     def derive_child(self, requested, parent, policy):
         return requested.intersect(parent).intersect(policy)

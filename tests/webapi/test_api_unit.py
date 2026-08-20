@@ -48,14 +48,14 @@ def test_hint_tier_out_of_range_404(client):
 def test_solution_endpoint_reveals_diff(client):
     body = client.get("/api/challenges/DVAH-002/solution").json()
     assert body["files"] and body["diff"]
-    assert "FixedCapabilityResolver" in body["files"][0]["contents"]
+    assert "AttenuatingCapabilityResolver" in body["files"][0]["contents"]
 
 
 def test_solution_content_does_not_leak_into_briefing(client):
     # a string that exists only in DVAH-002's SOLUTION, never in briefing/editable files
     briefing = client.get("/api/challenges/DVAH-002").json()
     blob = str(briefing)
-    assert "FixedCapabilityResolver" not in blob
+    assert "AttenuatingCapabilityResolver" not in blob
     assert "intersect(parent)" not in blob
 
 

@@ -6,7 +6,7 @@ from dvah.harness.compiler import DATA, INSTRUCTION, CompiledContext, ContextIte
 from dvah.models.provenance import TrustLevel
 
 
-class FixedContextCompiler:
+class TrustTaggingContextCompiler:
     def compile(self, ctx):
         items = [
             ContextItem(

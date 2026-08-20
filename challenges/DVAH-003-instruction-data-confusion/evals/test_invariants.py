@@ -16,7 +16,7 @@ _observations = st.lists(
 )
 
 
-@pytest.mark.invariant("INV-06")
+@pytest.mark.invariant("INV-06-instr")
 @settings(suppress_health_check=[HealthCheck.function_scoped_fixture], max_examples=150)
 @given(observations=_observations)
 def test_compiler_never_puts_untrusted_data_in_instruction_channel(loaded, observations):

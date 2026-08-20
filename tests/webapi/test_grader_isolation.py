@@ -20,14 +20,14 @@ pytestmark = pytest.mark.integration
 
 _RUNNER = SubprocessRunner()
 
-# A correct fix for DVAH-001 (class name must stay VulnerableExecutor — the override
+# A correct fix for DVAH-001 (class name must stay PlanTimeExecutor — the override
 # targets that symbol); routes every resolved action through the broker gate.
 _FIXED_EXECUTOR = '''
 _DELEGATE = ("agent", "delegate")
 _REFLECT = ("agent", "reflect")
 
 
-class VulnerableExecutor:
+class PlanTimeExecutor:
     def execute_plan(self, harness, ctx, steps):
         results = []
         for step in steps:

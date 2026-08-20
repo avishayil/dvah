@@ -8,9 +8,9 @@ model:
   provider: deterministic
 
 overrides:
-  executor: "guardrails.vulnerable.executor:VulnerableExecutor"
+  executor: "guardrails.vulnerable.executor:PlanTimeExecutor"
 solution_overrides:
-  executor: "guardrails.solution.executor:FixedExecutor"
+  executor: "guardrails.solution.executor:PerActionExecutor"
 
 objective:
   exploit: >

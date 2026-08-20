@@ -14,7 +14,7 @@ tiers:
     text: >
       Look at vulnerable/approvals.py: request/validate use a constant (plan-level) identifier and
       ignore the envelope's action_hash, so any grant validates any action. Bind the grant to
-      envelope.action_hash and validate by exact hash match — what FixedApprovalService does.
+      envelope.action_hash and validate by exact hash match — what ActionBoundApprovalService does.
   - level: solution
     text: >
       In request(), set approved_action_hash = envelope.action_hash; in validate(), return True

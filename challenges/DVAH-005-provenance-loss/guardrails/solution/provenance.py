@@ -5,5 +5,5 @@ from __future__ import annotations
 from dvah.guardrails.provenance import BuiltinProvenanceTracker
 
 
-class FixedProvenanceTracker(BuiltinProvenanceTracker):
+class PropagatingProvenanceTracker(BuiltinProvenanceTracker):
     pass

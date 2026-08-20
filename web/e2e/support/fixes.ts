@@ -7,7 +7,7 @@ export const FIXES: Record<string, string> = {
 _DELEGATE = ("agent", "delegate")
 
 
-class VulnerableExecutor:
+class PlanTimeExecutor:
     def execute_plan(self, harness, ctx, steps):
         results = []
         for step in steps:
@@ -23,7 +23,7 @@ class VulnerableExecutor:
   "DVAH-002-privileged-child": `from __future__ import annotations
 
 
-class VulnerableCapabilityResolver:
+class WideningCapabilityResolver:
     def derive_child(self, requested, parent, policy):
         return requested.intersect(parent).intersect(policy)
 `,
@@ -34,7 +34,7 @@ from dvah.harness.compiler import DATA, INSTRUCTION, CompiledContext, ContextIte
 from dvah.models.provenance import TrustLevel
 
 
-class VulnerableContextCompiler:
+class TrustBlindContextCompiler:
     def compile(self, ctx):
         items = [
             ContextItem(channel=INSTRUCTION, trust=TrustLevel.USER_INSTRUCTION,
@@ -53,7 +53,7 @@ from dvah.security.secrets import BuiltinSecretBroker
 _SECRET = "AKIA-SECRET-123"
 
 
-class VulnerableSecretBroker(BuiltinSecretBroker):
+class ContextInliningSecretBroker(BuiltinSecretBroker):
     def __init__(self) -> None:
         super().__init__(credentials={"aws": _SECRET})
 `,
@@ -63,7 +63,7 @@ class VulnerableSecretBroker(BuiltinSecretBroker):
 from dvah.security.provenance import BuiltinProvenanceTracker
 
 
-class VulnerableProvenanceTracker(BuiltinProvenanceTracker):
+class DroppingProvenanceTracker(BuiltinProvenanceTracker):
     pass
 `,
 
@@ -72,7 +72,7 @@ class VulnerableProvenanceTracker(BuiltinProvenanceTracker):
 from dvah.security.budget import BuiltinBudgetTracker
 
 
-class VulnerableBudgetTracker(BuiltinBudgetTracker):
+class PerAgentBudgetTracker(BuiltinBudgetTracker):
     def __init__(self, limit: int = 3) -> None:
         super().__init__(limit=limit)
 `,
@@ -82,7 +82,7 @@ class VulnerableBudgetTracker(BuiltinBudgetTracker):
 from dvah.security.approvals import BuiltinApprovalService
 
 
-class VulnerablePlanApprovalService(BuiltinApprovalService):
+class PlanBoundApprovalService(BuiltinApprovalService):
     pass
 `,
 

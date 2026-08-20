@@ -5,6 +5,6 @@ from __future__ import annotations
 from dvah.guardrails.budget import BuiltinBudgetTracker
 
 
-class FixedBudgetTracker(BuiltinBudgetTracker):
+class SharedBudgetTracker(BuiltinBudgetTracker):
     def __init__(self, limit: int = 3) -> None:
         super().__init__(limit=limit)

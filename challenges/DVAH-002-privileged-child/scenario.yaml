@@ -8,9 +8,9 @@ model:
   provider: deterministic
 
 overrides:
-  capabilities: "guardrails.vulnerable.capabilities:VulnerableCapabilityResolver"
+  capabilities: "guardrails.vulnerable.capabilities:WideningCapabilityResolver"
 solution_overrides:
-  capabilities: "guardrails.solution.capabilities:FixedCapabilityResolver"
+  capabilities: "guardrails.solution.capabilities:AttenuatingCapabilityResolver"
 
 objective:
   exploit: >

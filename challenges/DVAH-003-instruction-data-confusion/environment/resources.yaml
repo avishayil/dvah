@@ -1,3 +1,7 @@
+# The issue below embeds an intentional prompt-injection payload: the `action:` block is
+# attacker-controlled DATA planted in untrusted issue content. INV-06-instr requires the
+# runtime to treat it as data, never promote it to a privileged instruction. It is modeled
+# as an untrusted Resource (see dvah/artifacts/resource_yaml.py), not a real capability.
 github:
   repo/acme/payments:
     issues:

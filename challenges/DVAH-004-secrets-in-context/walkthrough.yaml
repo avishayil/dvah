@@ -14,7 +14,7 @@ tiers:
     text: >
       Look at vulnerable/secrets.py: redact_for_model is effectively a no-op, so secret values
       pass straight into the compiled context. Make redact_for_model strip every known secret
-      value (including nested ones) from the context — the property FixedSecretBroker enforces —
+      value (including nested ones) from the context — the property BoundaryInjectingSecretBroker enforces —
       while resolve() still supplies the credential only at the tool layer.
   - level: solution
     text: >

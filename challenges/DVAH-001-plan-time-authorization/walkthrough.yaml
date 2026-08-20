@@ -15,7 +15,7 @@ tiers:
       Look at vulnerable/executor.py. It authorizes steps[0] a single time and then loops
       calling the tools directly. Make every step pass through the broker's per-action gate
       (harness.broker.run_step) so each resolved operation is authorized immediately before
-      it executes — the same slot the correct FixedExecutor fills.
+      it executes — the same slot the correct PerActionExecutor fills.
   - level: solution
     text: >
       Replace the authorize-once-then-execute-all loop with one that resolves and authorizes

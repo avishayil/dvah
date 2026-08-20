@@ -14,7 +14,7 @@ tiers:
     text: >
       Look at vulnerable/capabilities.py: derive_child ignores parent and requested and simply
       returns the policy profile. Change it so the returned set is the intersection of
-      requested, parent, and policy — the property the FixedCapabilityResolver enforces.
+      requested, parent, and policy — the property the AttenuatingCapabilityResolver enforces.
   - level: solution
     text: >
       Implement derive_child as requested.intersect(parent).intersect(policy). Then the child

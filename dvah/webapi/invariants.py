@@ -7,7 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 
 _DOCS = Path(__file__).resolve().parent.parent.parent / "docs" / "INVARIANTS.md"
-_ROW = re.compile(r"^\|\s*(INV-\d+)\s*\|\s*(.+?)\s*\|")
+_ROW = re.compile(r"^\|\s*(INV-[0-9]+(?:-[a-z]+)?)\s*\|\s*(.+?)\s*\|")
 
 
 @lru_cache(maxsize=1)

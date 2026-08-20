@@ -12,7 +12,7 @@ class _FakeCtx:
         max_actions = 10_000_000
 
 
-@pytest.mark.invariant("INV-06")
+@pytest.mark.invariant("INV-06-budget")
 def test_configured_budget_is_globally_bounded(loaded):
     """INV-06: the configured budget must eventually stop, regardless of per-agent state."""
     tracker = loaded.harness.cfg.budget

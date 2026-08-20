@@ -11,7 +11,7 @@ from dvah.harness.resolver import build_envelope, resolve_operation
 from dvah.guardrails.decision import Denied, Verdict
 
 
-class VulnerableExecutor:
+class PlanTimeExecutor:
     def execute_plan(self, harness, ctx, steps):
         cfg = harness.cfg
         task_id = ctx.intent.task_id
