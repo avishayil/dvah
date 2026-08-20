@@ -24,22 +24,22 @@ from ..observability.trace import TraceLog
 from ..providers.model import PlanStep
 from ..providers.native_tools import NativeToolProvider
 from ..providers.reactive import ContextActionModel
-from ..security.approvals import BuiltinApprovalService
-from ..security.budget import BuiltinBudgetTracker
-from ..security.capabilities import BuiltinCapabilityResolver
-from ..security.decision import Denied, Verdict
-from ..security.policy import BuiltinPolicy
-from ..security.provenance import BuiltinProvenanceTracker
-from ..security.secrets import BuiltinSecretBroker
-from ..services.memory import FileStore, GithubStore
+from ..guardrails.approvals import BuiltinApprovalService
+from ..guardrails.budget import BuiltinBudgetTracker
+from ..guardrails.capabilities import BuiltinCapabilityResolver
+from ..guardrails.decision import Denied, Verdict
+from ..guardrails.policy import BuiltinPolicy
+from ..guardrails.provenance import BuiltinProvenanceTracker
+from ..guardrails.secrets import BuiltinSecretBroker
+from ..services.world_state import FileStore, GithubStore
 from ..harness.compiler import BuiltinContextCompiler
 from dataclasses import replace as _replace
 
 from ..models.runtime import SkillRef
 from ..models.skill import SkillManifest
-from ..security.revocation import RevocationRegistry
-from ..security.skills import BuiltinSkillLoader
-from ..services.memory_store import BuiltinMemoryProvider, MemoryStore
+from ..guardrails.revocation import RevocationRegistry
+from ..guardrails.skills import BuiltinSkillLoader
+from ..memory.store import BuiltinMemoryProvider, MemoryStore
 from . import broken
 from .flags import ALL_FLAGS, FLAG_TO_INV, FLAG_TO_SLOT, MutationFlags
 

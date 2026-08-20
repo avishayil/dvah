@@ -14,7 +14,7 @@ from ..models.observation import Observation
 from ..models.provenance import INSTRUCTION_TRUST_LEVELS, TrustLevel
 from ..providers.model import PlanStep
 from ..providers.tools import ToolResult
-from ..security.decision import Decision, Denied, Verdict
+from ..guardrails.decision import Decision, Denied, Verdict
 from .context import RunContext
 from .resolver import build_envelope, resolve_operation
 

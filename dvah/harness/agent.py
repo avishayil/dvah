@@ -19,7 +19,7 @@ from ..models.skill import SkillManifest
 from ..providers.model import AgentState, PlanStep
 from ..providers.session import ScriptedSession
 from ..providers.tools import ToolResult
-from ..security.decision import Decision, Denied, Verdict
+from ..guardrails.decision import Decision, Denied, Verdict
 from .context import RunContext
 
 

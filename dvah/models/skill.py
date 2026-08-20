@@ -4,7 +4,7 @@ A skill is a runtime object an agent loads: it contributes *instructions* and *t
 declares the *permissions/mcp/network/secrets* it needs. A skill upgrade must not silently
 widen what an agent can do — the manifest carries a content ``digest`` (so approval can pin
 a version) and the capabilities it *requests* (which are never granted beyond the agent's
-own approved set; see ``dvah.security.skills``).
+own approved set; see ``dvah.guardrails.skills``).
 """
 
 from __future__ import annotations

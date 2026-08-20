@@ -10,7 +10,7 @@ from ..harness.compiler import DATA, INSTRUCTION, CompiledContext, ContextItem
 from ..harness.resolver import build_envelope, resolve_operation
 from ..models.approval import ApprovalGrant
 from ..models.provenance import TrustLevel
-from ..security.decision import Decision, Denied, Verdict
+from ..guardrails.decision import Decision, Denied, Verdict
 
 
 class PlanTimeExecutor:
@@ -165,7 +165,7 @@ class AutoGrantSkillLoader:
 
     def load(self, manifest, approved_permissions, pinned_digest):
         from ..models.capability import CapabilitySet
-        from ..security.skills import SkillLoadResult
+        from ..guardrails.skills import SkillLoadResult
 
         return SkillLoadResult(
             granted=CapabilitySet(caps=frozenset(manifest.permissions)),

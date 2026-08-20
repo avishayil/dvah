@@ -12,7 +12,7 @@ from ..models.skill import SkillManifest
 from ..providers.model import AgentState, ModelRequest, ModelSession, PlanStep
 from ..providers.session import ScriptedSession
 from ..providers.tools import ToolResult
-from ..security.skills import SkillLoadResult
+from ..guardrails.skills import SkillLoadResult
 from .agent import AgentRuntime
 from .broker import ActionBroker
 from .config import HarnessConfig

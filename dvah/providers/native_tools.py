@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from ..models.operation import Operation
 from ..models.provenance import TrustLevel
-from ..services.memory import FileStore, GithubStore
+from ..services.world_state import FileStore, GithubStore
 from .tools import ToolResult
 
 
