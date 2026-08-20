@@ -1,16 +1,16 @@
 id: DVAH-003
 title: Data Becomes Instructions
 difficulty: medium
-invariants: [INV-06]
+invariants: [INV-06-instr]
 components: [context_compiler, planner, policy]
 
 model:
   provider: reactive
 
 overrides:
-  context_compiler: "guardrails.vulnerable.compiler:VulnerableContextCompiler"
+  context_compiler: "guardrails.vulnerable.compiler:TrustBlindContextCompiler"
 solution_overrides:
-  context_compiler: "guardrails.solution.compiler:FixedContextCompiler"
+  context_compiler: "guardrails.solution.compiler:TrustTaggingContextCompiler"
 
 objective:
   exploit: >

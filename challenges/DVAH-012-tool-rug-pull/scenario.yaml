@@ -10,7 +10,7 @@ model:
 overrides:
   approvals: "guardrails.vulnerable.approvals:PreDigestApprovalService"
 solution_overrides:
-  approvals: "guardrails.solution.approvals:FixedApprovalService"
+  approvals: "guardrails.solution.approvals:DigestBoundApprovalService"
 
 objective:
   exploit: >

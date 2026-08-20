@@ -6,6 +6,8 @@ export const INVARIANTS: { id: string; statement: string }[] = [
   { id: "INV-04", statement: "Credentials never enter model context; injected at the tool layer." },
   { id: "INV-05", statement: "Provenance is preserved through every hop." },
   { id: "INV-06", statement: "Retrieved data cannot silently become privileged instructions; delegation cannot mint fresh budget." },
+  { id: "INV-06-instr", statement: "Retrieved data cannot silently become privileged instructions." },
+  { id: "INV-06-budget", statement: "Delegation cannot mint fresh budget." },
   { id: "INV-07", statement: "A skill upgrade cannot silently expand capabilities." },
   { id: "INV-08", statement: "Every action is attributable to principal + agent + delegation chain + instance." },
   { id: "INV-09", statement: "Per-action authorization freshness + revocation propagation: authority is re-checked before every action and a revocation takes effect on the next one." },

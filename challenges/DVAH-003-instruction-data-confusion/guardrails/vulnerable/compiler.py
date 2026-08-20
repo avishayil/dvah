@@ -10,7 +10,7 @@ from dvah.harness.compiler import INSTRUCTION, CompiledContext, ContextItem
 from dvah.models.provenance import TrustLevel
 
 
-class VulnerableContextCompiler:
+class TrustBlindContextCompiler:
     def compile(self, ctx):
         items = [
             ContextItem(

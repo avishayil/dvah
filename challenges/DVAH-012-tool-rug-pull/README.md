@@ -17,7 +17,7 @@ another.
 ## Your job
 Bind approval to the resolved `action_hash`, which (since Wave A) already includes
 `runtime.skill.digest` / `runtime.mcp_server.digest`. The reference fix is in `guardrails/solution/`
-(`FixedApprovalService` = the built-in, digest-bound approval service).
+(`DigestBoundApprovalService` = the built-in, digest-bound approval service).
 
 ## Prove it
 ```

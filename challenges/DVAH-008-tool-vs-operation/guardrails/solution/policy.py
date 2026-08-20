@@ -5,5 +5,5 @@ from __future__ import annotations
 from dvah.guardrails.policy import BuiltinPolicy
 
 
-class FixedPolicy(BuiltinPolicy):
+class OperationScopedPolicy(BuiltinPolicy):
     pass

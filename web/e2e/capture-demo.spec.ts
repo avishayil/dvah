@@ -139,7 +139,7 @@ test("capture DVAH-001 guided-demo frames + manifest", async ({ page }) => {
   // 4 — patched: the reference fix is in the editor. Zoom the editor; the cursor rests on the
   // patched code (kept inside the zoomed region).
   await page.getByRole("tab", { name: /^run$/i }).first().click();
-  await applyFix(page, "vulnerable/executor.py", FIXES[LAB]);
+  await applyFix(page, "guardrails/vulnerable/executor.py", FIXES[LAB]);
   await shoot(
     "04-patched.png",
     "The fix: authorize every resolved action the moment it runs — route each step through the harness's per-action gate. Now re-run everything.",

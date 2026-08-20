@@ -8,9 +8,9 @@ model:
   provider: reactive
 
 overrides:
-  secrets: "guardrails.vulnerable.secrets:VulnerableSecretBroker"
+  secrets: "guardrails.vulnerable.secrets:ContextInliningSecretBroker"
 solution_overrides:
-  secrets: "guardrails.solution.secrets:FixedSecretBroker"
+  secrets: "guardrails.solution.secrets:BoundaryInjectingSecretBroker"
 
 objective:
   exploit: >

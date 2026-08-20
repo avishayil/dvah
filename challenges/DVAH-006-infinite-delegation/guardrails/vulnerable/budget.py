@@ -9,7 +9,7 @@ from __future__ import annotations
 from dvah.guardrails.decision import Decision, Denied, Verdict
 
 
-class VulnerableBudgetTracker:
+class PerAgentBudgetTracker:
     def charge(self, ctx) -> None:
         # BUG: bounds each agent individually; delegation mints new budget.
         if ctx.actions_used >= ctx.constraints.max_actions:

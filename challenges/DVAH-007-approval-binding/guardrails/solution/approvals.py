@@ -5,5 +5,5 @@ from __future__ import annotations
 from dvah.guardrails.approvals import BuiltinApprovalService
 
 
-class FixedApprovalService(BuiltinApprovalService):
+class ActionBoundApprovalService(BuiltinApprovalService):
     pass

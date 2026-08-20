@@ -13,7 +13,7 @@ from dvah.models.approval import ApprovalGrant
 _PLAN_ID = "sha256:plan-DVAH-007"
 
 
-class VulnerablePlanApprovalService:
+class PlanBoundApprovalService:
     def __init__(self) -> None:
         self._ids = itertools.count(1)
 

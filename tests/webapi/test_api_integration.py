@@ -10,13 +10,13 @@ from dvah.webapi.app import app
 pytestmark = pytest.mark.integration
 
 # A correct fix for DVAH-001: route every resolved action through the broker gate.
-# Class name must stay VulnerableExecutor (the scenario override targets that symbol).
+# Class name must stay PlanTimeExecutor (the scenario override targets that symbol).
 _FIXED_EXECUTOR = '''
 _DELEGATE = ("agent", "delegate")
 _REFLECT = ("agent", "reflect")
 
 
-class VulnerableExecutor:
+class PlanTimeExecutor:
     def execute_plan(self, harness, ctx, steps):
         results = []
         for step in steps:
@@ -99,7 +99,7 @@ def test_files_endpoint_never_exposes_solution(client):
     sid = _new_session(client, "DVAH-002")
     files = client.get(f"/api/sessions/{sid}/files").json()["files"]
     assert all("solution" not in f["path"] for f in files)
-    assert all("FixedCapabilityResolver" not in f["contents"] for f in files)
+    assert all("AttenuatingCapabilityResolver" not in f["contents"] for f in files)
 
 
 def test_runner_kills_on_timeout(client):

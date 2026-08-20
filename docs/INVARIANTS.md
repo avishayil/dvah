@@ -15,6 +15,8 @@ restore the primary property for *all* inputs, not just the demonstrated exploit
 | INV-04 | Credentials never enter model context; injected at the tool layer | `dvah/guardrails/secrets.py` | broker step 5 |
 | INV-05 | Provenance (source/trust/tenant/ts) is preserved through every hop | `dvah/guardrails/provenance.py` | `tag`/`merge` |
 | INV-06 | Retrieved data cannot silently become privileged instructions / delegation cannot mint fresh budget | `dvah/harness/compiler.py`, `dvah/guardrails/budget.py` | context compile; delegation |
+| INV-06-instr | Retrieved data cannot silently become privileged instructions | `dvah/harness/compiler.py` | context compile (DVAH-003) |
+| INV-06-budget | Delegation cannot mint fresh budget | `dvah/guardrails/budget.py` | delegation (DVAH-006) |
 | INV-07 | A skill upgrade cannot silently expand capabilities | `dvah/guardrails/skills.py` (skill digest + permission-diff) | skill load |
 | INV-08 | Every action is attributable to principal + agent + delegation chain + instance | `dvah/models/envelope.py` + policy | envelope construction |
 | INV-09 | Per-action authorization freshness + revocation propagation: authority is re-checked before *every* action and a revocation takes effect on the next one | `dvah/guardrails/revocation.py` + `policy.py` | per-action authorize |

@@ -4,7 +4,7 @@ import { EditorPanel } from "@/components/editor-panel";
 import type { EditableFile } from "@/lib/types";
 
 const FILES: EditableFile[] = [
-  { path: "vulnerable/executor.py", contents: "class VulnerableExecutor: ...", writable: true, group: "patch" },
+  { path: "vulnerable/executor.py", contents: "class PlanTimeExecutor: ...", writable: true, group: "patch" },
   { path: "environment/users.yaml", contents: "principal: {}", writable: false, group: "world" },
   { path: "dvah/harness/resolver.py", contents: "def build_envelope(): ...", writable: false, group: "reference", label: "dvah.harness.resolver" },
 ];

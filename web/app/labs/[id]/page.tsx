@@ -213,8 +213,8 @@ export default function LabPage({ params }: { params: Promise<{ id: string }> })
     if (!sid) return;
     const sol = await api.solution(id, sid);
     const byName = new Map(sol.files.map((f) => [f.path.split("/").pop(), f.contents]));
-    // The scenario loads the slot by the *vulnerable* class name (e.g. `VulnerableExecutor`),
-    // but the reference solution renames the class (e.g. `FixedExecutor`). Copying it verbatim
+    // The scenario loads the slot by the *vulnerable* class name (e.g. `PlanTimeExecutor`),
+    // but the reference solution renames the class (e.g. `PerActionExecutor`). Copying it verbatim
     // would break the import, so rename the solution's class back to the original — this is the
     // same "keep the class name, fix the body" patch a learner makes.
     const className = (src: string) => src.match(/class\s+(\w+)/)?.[1];

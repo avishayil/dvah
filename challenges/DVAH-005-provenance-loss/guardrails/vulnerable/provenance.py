@@ -5,6 +5,6 @@ from __future__ import annotations
 from dvah.guardrails.provenance import BuiltinProvenanceTracker
 
 
-class VulnerableProvenanceTracker(BuiltinProvenanceTracker):
+class DroppingProvenanceTracker(BuiltinProvenanceTracker):
     def merge(self, record, tag):
         return record  # BUG: provenance is discarded

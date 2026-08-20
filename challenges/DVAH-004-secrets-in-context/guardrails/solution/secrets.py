@@ -7,6 +7,6 @@ from dvah.guardrails.secrets import BuiltinSecretBroker
 _SECRET = "AKIA-SECRET-123"
 
 
-class FixedSecretBroker(BuiltinSecretBroker):
+class BoundaryInjectingSecretBroker(BuiltinSecretBroker):
     def __init__(self) -> None:
         super().__init__(credentials={"aws": _SECRET})

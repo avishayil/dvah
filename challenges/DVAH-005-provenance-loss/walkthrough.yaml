@@ -14,7 +14,7 @@ tiers:
     text: >
       Look at vulnerable/provenance.py: merge returns the record unchanged, discarding the new
       tag. Make merge actually append the tag to the record (routing it to instruction vs data
-      by trust), so each tool output is recorded — the behavior FixedProvenanceTracker provides.
+      by trust), so each tool output is recorded — the behavior PropagatingProvenanceTracker provides.
   - level: solution
     text: >
       Implement merge so it returns a record that includes the new provenance tag (adding to the

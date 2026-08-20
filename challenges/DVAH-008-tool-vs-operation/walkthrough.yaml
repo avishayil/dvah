@@ -15,7 +15,7 @@ tiers:
       Look at vulnerable/policy.py (ToolNamePolicy): it authorizes on the operation namespace alone
       — any capability in that namespace allows everything in it, and it skips approval checks.
       Authorize against the held capabilities for the exact action (and honor approval-required
-      operations) — the behavior FixedPolicy/BuiltinPolicy implements.
+      operations) — the behavior OperationScopedPolicy/BuiltinPolicy implements.
   - level: solution
     text: >
       Decide on capabilities.permits(namespace, action) for the resolved operation (deny when no

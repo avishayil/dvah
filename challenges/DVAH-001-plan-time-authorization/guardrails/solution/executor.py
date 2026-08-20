@@ -9,7 +9,7 @@ from __future__ import annotations
 _DELEGATE = ("agent", "delegate")
 
 
-class FixedExecutor:
+class PerActionExecutor:
     def execute_plan(self, harness, ctx, steps):
         results = []
         for step in steps:

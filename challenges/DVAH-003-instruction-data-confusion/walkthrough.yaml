@@ -14,7 +14,7 @@ tiers:
     text: >
       Look at vulnerable/compiler.py: it places tool observations into the instruction channel,
       preserving their untrusted trust level. Change the compiler so observations always go to
-      the data channel and are never treated as instructions — the property FixedContextCompiler
+      the data channel and are never treated as instructions — the property TrustTaggingContextCompiler
       guarantees (compiled context has no untrusted item in the instruction channel).
   - level: solution
     text: >

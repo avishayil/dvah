@@ -7,7 +7,7 @@ tiers:
   - level: pointer
     text: "Look at vulnerable/approvals.py: its binding key hashes actor+operation+resource+params+delegation+tenant but omits the tool digest. The resolved ActionEnvelope.action_hash already includes runtime.skill.digest / runtime.mcp_server.digest — bind to that."
   - level: solution
-    text: "Bind and validate approvals against the full action_hash (which includes the tool/skill digest). The reference FixedApprovalService simply uses the built-in digest-bound service, so a grant for tool D1 no longer validates the same op under tool D2."
+    text: "Bind and validate approvals against the full action_hash (which includes the tool/skill digest). The reference DigestBoundApprovalService simply uses the built-in digest-bound service, so a grant for tool D1 no longer validates the same op under tool D2."
 steps:
   - "Read the objective and open the Trace / envelope: note that the action carries a tool/skill digest."
   - "Run the exploit task — it constructs a grant for tool D1 and checks whether it validates the same operation under tool D2."
