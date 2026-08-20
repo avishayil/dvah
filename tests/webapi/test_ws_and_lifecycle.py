@@ -48,7 +48,7 @@ def test_broken_code_surfaces_an_error_not_zero_tests():
     sid = _session()
     client.put(
         f"/api/sessions/{sid}/files",
-        json={"path": "vulnerable/executor.py", "contents": "def (syntax error"},
+        json={"path": "guardrails/vulnerable/executor.py", "contents": "def (syntax error"},
     )
     res = client.post(f"/api/sessions/{sid}/run", json={"markers": ["exploit"]}).json()
     assert res["tests"], "a broken edit must surface tests, not an empty list"

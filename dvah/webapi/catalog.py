@@ -36,7 +36,7 @@ def _references(challenge_dir: Path) -> list[dict]:
     trace calls like ``from dvah.harness.resolver import build_envelope`` without leaving
     the UI. Read-only; deduped; non-dvah/stdlib imports skipped."""
     modules: set[str] = set()
-    for f in sorted((challenge_dir / "vulnerable").glob("*.py")):
+    for f in sorted((challenge_dir / "guardrails" / "vulnerable").glob("*.py")):
         try:
             tree = ast.parse(f.read_text())
         except (OSError, SyntaxError):
@@ -88,8 +88,8 @@ def list_challenges() -> dict:
 
 def _editable_files(challenge_dir: Path) -> list[dict]:
     return [
-        {"path": f"vulnerable/{p.name}", "contents": p.read_text()}
-        for p in sorted((challenge_dir / "vulnerable").glob("*.py"))
+        {"path": f"guardrails/vulnerable/{p.name}", "contents": p.read_text()}
+        for p in sorted((challenge_dir / "guardrails" / "vulnerable").glob("*.py"))
         if p.name != "__init__.py"
     ]
 
@@ -178,7 +178,9 @@ def briefing(challenge_id: str) -> dict:
     challenge_dir = base.resolve_challenge(challenge_id)
     spec = base.read_scenario(challenge_dir)
     readme = challenge_dir / "README.md"
-    plans = challenge_dir / "environment" / "plans.yaml"
+    plans = challenge_dir / "workflows" / "plans.yaml"
+    if not plans.exists():
+        plans = challenge_dir / "environment" / "plans.yaml"
     import yaml
 
     tasks = list((yaml.safe_load(plans.read_text()) or {}).keys()) if plans.exists() else []

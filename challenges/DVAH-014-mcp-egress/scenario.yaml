@@ -10,9 +10,9 @@ model:
 # The one broken slot: the tool boundary. The vulnerable provider inherits unrestricted
 # egress; the fix contains the boundary in the harness (allowlist + pinned server id).
 overrides:
-  tools: "vulnerable.mcp:InheritedEgressMCPProvider"
+  tools: "guardrails.vulnerable.mcp:InheritedEgressMCPProvider"
 solution_overrides:
-  tools: "solution.mcp:ContainedMCPProvider"
+  tools: "guardrails.solution.mcp:ContainedMCPProvider"
 
 objective:
   exploit: >

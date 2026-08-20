@@ -19,6 +19,19 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
+# Optional artifact/context dirs the loader reads; copied into a workspace when present so
+# load_challenge works there. NONE of these contain the reference solution.
+_CONTEXT_DIRS = ("environment", "workflows", "agents", "skills", "resources", "prompts", "tools")
+
+
+def _copy_context(source: Path, dest: Path) -> None:
+    """Copy scenario.yaml + the loader's context dirs (never solution/ or evals/)."""
+    shutil.copy2(source / "scenario.yaml", dest / "scenario.yaml")
+    for name in _CONTEXT_DIRS:
+        src = source / name
+        if src.exists():
+            shutil.copytree(src, dest / name)
+
 # Binds the ``loaded`` fixture to THIS workspace with the right mode, so the sandboxed
 # pytest run needs no ``--challenge`` option (mirrors the per-session conftest).
 _CONFTEST = '''\
@@ -45,18 +58,17 @@ def assemble_workspace(
     dest = Path(dest)
     dest.mkdir(parents=True, exist_ok=True)
 
-    shutil.copytree(source / "tests", dest / "tests")
-    shutil.copytree(source / "environment", dest / "environment")
-    shutil.copy2(source / "scenario.yaml", dest / "scenario.yaml")
+    shutil.copytree(source / "evals", dest / "evals")
+    _copy_context(source, dest)
     (dest / "conftest.py").write_text(_CONFTEST.format(use_solution=use_solution))
 
     if use_solution:
         # Reference run: pristine solution only, never any learner-controlled code.
-        shutil.copytree(source / "solution", dest / "solution")
+        shutil.copytree(source / "guardrails" / "solution", dest / "guardrails" / "solution")
     else:
         # Learner run: the code under test only; solution/ is intentionally not copied.
-        overlay = Path(code_dir) if code_dir else (source / "vulnerable")
-        shutil.copytree(overlay, dest / "vulnerable")
+        overlay = Path(code_dir) if code_dir else (source / "guardrails" / "vulnerable")
+        shutil.copytree(overlay, dest / "guardrails" / "vulnerable")
     return dest
 
 
@@ -75,12 +87,11 @@ def assemble_server_workspace(
     dest = Path(dest)
     dest.mkdir(parents=True, exist_ok=True)
 
-    shutil.copytree(source / "environment", dest / "environment")
-    shutil.copy2(source / "scenario.yaml", dest / "scenario.yaml")
+    _copy_context(source, dest)  # scenario + environment/workflows/etc — never evals/ or solution/
 
     if use_solution:
-        shutil.copytree(source / "solution", dest / "solution")
+        shutil.copytree(source / "guardrails" / "solution", dest / "guardrails" / "solution")
     else:
-        overlay = Path(code_dir) if code_dir else (source / "vulnerable")
-        shutil.copytree(overlay, dest / "vulnerable")
+        overlay = Path(code_dir) if code_dir else (source / "guardrails" / "vulnerable")
+        shutil.copytree(overlay, dest / "guardrails" / "vulnerable")
     return dest

@@ -33,15 +33,17 @@ def _server_workspace(challenge_id: str, use_solution: bool) -> Path:
 def test_learner_server_workspace_has_no_tests_or_solution():
     ws = _server_workspace("DVAH-001-plan-time-authorization", use_solution=False)
     names = {p.name for p in ws.iterdir()}
-    assert "vulnerable" in names and "environment" in names and "scenario.yaml" in names
-    assert "tests" not in names, "hidden tests must not be on the learner-executed filesystem"
-    assert "solution" not in names, "reference solution must not coexist with learner code"
+    assert "guardrails" in names and "environment" in names and "scenario.yaml" in names
+    assert not (ws / "evals").exists(), "hidden tests must not be on the learner filesystem"
+    assert (ws / "guardrails" / "vulnerable").is_dir()
+    assert not (ws / "guardrails" / "solution").exists(), "solution must not coexist with learner code"
 
 
 def test_reference_server_workspace_has_solution_not_learner_code():
     ws = _server_workspace("DVAH-001-plan-time-authorization", use_solution=True)
-    names = {p.name for p in ws.iterdir()}
-    assert "solution" in names and "vulnerable" not in names and "tests" not in names
+    assert (ws / "guardrails" / "solution").is_dir()
+    assert not (ws / "guardrails" / "vulnerable").exists()
+    assert not (ws / "evals").exists()
 
 
 def test_rpc_adapter_round_trips_over_stdio():

@@ -8,9 +8,9 @@ model:
   provider: reactive
 
 overrides:
-  policy: "vulnerable.policy:ToolNamePolicy"
+  policy: "guardrails.vulnerable.policy:ToolNamePolicy"
 solution_overrides:
-  policy: "solution.policy:FixedPolicy"
+  policy: "guardrails.solution.policy:FixedPolicy"
 
 objective:
   exploit: >

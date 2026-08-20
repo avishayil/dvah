@@ -8,9 +8,9 @@ model:
   provider: reactive
 
 overrides:
-  skill_loader: "vulnerable.skills:AutoAcceptSkillLoader"
+  skill_loader: "guardrails.vulnerable.skills:AutoAcceptSkillLoader"
 solution_overrides:
-  skill_loader: "solution.skills:PinnedSkillLoader"
+  skill_loader: "guardrails.solution.skills:PinnedSkillLoader"
 
 objective:
   exploit: >

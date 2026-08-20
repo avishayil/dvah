@@ -8,9 +8,9 @@ model:
   provider: reactive
 
 overrides:
-  policy: "vulnerable.policy:CachingPolicy"
+  policy: "guardrails.vulnerable.policy:CachingPolicy"
 solution_overrides:
-  policy: "solution.policy:RevokedActionPolicy"
+  policy: "guardrails.solution.policy:RevokedActionPolicy"
 
 objective:
   exploit: >

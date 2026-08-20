@@ -8,9 +8,9 @@ model:
   provider: reactive
 
 overrides:
-  context_compiler: "vulnerable.compiler:VulnerableContextCompiler"
+  context_compiler: "guardrails.vulnerable.compiler:VulnerableContextCompiler"
 solution_overrides:
-  context_compiler: "solution.compiler:FixedContextCompiler"
+  context_compiler: "guardrails.solution.compiler:FixedContextCompiler"
 
 objective:
   exploit: >

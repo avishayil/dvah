@@ -8,9 +8,9 @@ model:
   provider: reactive
 
 overrides:
-  budget: "vulnerable.budget:RacyBudgetTracker"
+  budget: "guardrails.vulnerable.budget:RacyBudgetTracker"
 solution_overrides:
-  budget: "solution.budget:AtomicBudgetTracker"
+  budget: "guardrails.solution.budget:AtomicBudgetTracker"
 
 objective:
   exploit: >

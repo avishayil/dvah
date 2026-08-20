@@ -57,7 +57,7 @@ def test_patched_code_passes_and_flips_invariant(client):
     sid = _new_session(client)
     r = client.put(
         f"/api/sessions/{sid}/files",
-        json={"path": "vulnerable/executor.py", "contents": _FIXED_EXECUTOR},
+        json={"path": "guardrails/vulnerable/executor.py", "contents": _FIXED_EXECUTOR},
     )
     assert r.json() == {"ok": True}
     body = client.post(
@@ -88,7 +88,7 @@ def test_reset_restores_original_code(client):
     sid = _new_session(client)
     client.put(
         f"/api/sessions/{sid}/files",
-        json={"path": "vulnerable/executor.py", "contents": _FIXED_EXECUTOR},
+        json={"path": "guardrails/vulnerable/executor.py", "contents": _FIXED_EXECUTOR},
     )
     restored = client.post(f"/api/sessions/{sid}/reset").json()["editable_files"]
     executor = next(f for f in restored if f["path"].endswith("executor.py"))
@@ -113,7 +113,7 @@ def test_runner_kills_on_timeout(client):
     from dvah.webapi.app import SESSIONS
 
     path = SESSIONS.path(sid)
-    (path / "tests" / "test_hang.py").write_text(
+    (path / "evals" / "test_hang.py").write_text(
         "import time, pytest\n"
         "@pytest.mark.exploit\n"
         "def test_hang():\n    time.sleep(30)\n"

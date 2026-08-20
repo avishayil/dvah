@@ -8,9 +8,9 @@ model:
   provider: reactive
 
 overrides:
-  approvals: "vulnerable.approvals:VulnerablePlanApprovalService"
+  approvals: "guardrails.vulnerable.approvals:VulnerablePlanApprovalService"
 solution_overrides:
-  approvals: "solution.approvals:FixedApprovalService"
+  approvals: "guardrails.solution.approvals:FixedApprovalService"
 
 objective:
   exploit: >

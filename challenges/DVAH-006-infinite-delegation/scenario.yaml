@@ -12,9 +12,9 @@ constraints:
   max_actions: 3
 
 overrides:
-  budget: "vulnerable.budget:VulnerableBudgetTracker"
+  budget: "guardrails.vulnerable.budget:VulnerableBudgetTracker"
 solution_overrides:
-  budget: "solution.budget:FixedBudgetTracker"
+  budget: "guardrails.solution.budget:FixedBudgetTracker"
 
 objective:
   exploit: >
