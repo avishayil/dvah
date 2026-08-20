@@ -22,3 +22,10 @@ dvah test DVAH-002
 The exploit test passes only when the child's out-of-scope comment is denied; the
 invariant (property) test checks that for *any* inputs the derived child set is a
 subset of both parent and policy.
+
+## Artifacts
+This lab ships an authored `agents/investigator.md` (its `AgentDefinition` — frontmatter +
+system prompt, with `capabilities` cross-validated against `environment/agents.yaml`) and a
+`prompts/system.md` base instruction layer. These are advisory reference-architecture
+overlays for the live/subagent path — nothing here reaches `action_hash` or changes the
+security verdict.

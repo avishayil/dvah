@@ -196,16 +196,23 @@ with `cd web && npm run capture:demo` (writes `web/public/demo/` + mirrors to `s
 
 ```
 dvah/            # the harness package
-  models/        # frozen data (ActionEnvelope and its parts)
-  security/      # first-class swappable security services (policy, approvals, caps, …)
+  models/        # frozen data (ActionEnvelope + parts; Resource, Workflow, PromptStack)
+  guardrails/    # first-class swappable security services (policy, approvals, caps, …)
+                 #   (renamed from security/, which stays as a compat shim)
   harness/       # runtime plumbing: broker gate, executor, delegation, context
+  memory/        # agent memory (reference Memory layer); world state → services/world_state.py
+  resources/     # Resource domain home (MCP-style read-only knowledge, untrusted-by-default)
+  workflows/     # descriptive Workflow model over plans.yaml (not executed)
+  prompts/       # layered prompt stacks (system → agent → skill → task)
+  schemas/       # dependency-free output-schema validator
   providers/     # model + tool providers (deterministic, anthropic, openai, bedrock, http)
   artifacts/     # parsers for file-based artifacts (SKILL.md / agents/*.md / tool catalog)
   tools/catalog/ # core, provider-shared tool specs (files, github, email, cloud, mcp)
   mutation/      # the chaos engine (invariant-defeat probes)
   webapi/        # FastAPI app wrapping the harness for the web UI
   cli.py         # dvah list|start|test|trace|mutate
-challenges/      # the labs (vulnerable/ + hidden solution/ + tests/ + walkthrough.yaml)
+challenges/      # the labs (vulnerable/ + hidden solution/ + tests/ + walkthrough.yaml;
+                 #   each also ships agents/<root>.md + prompts/system.md)
 services/        # FastAPI mock external systems (files/github/email/cloud)
 web/             # Next.js browser IDE
 docs/            # architecture, invariants, standards mapping
@@ -226,7 +233,7 @@ cd web && npm test                                  # frontend component tests
 
 ## Documentation
 
-- [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — components and the harness/security split
+- [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — components, the harness/guardrails split, and the reference-architecture overlay
 - [`docs/INVARIANTS.md`](./docs/INVARIANTS.md) — the invariants + lab mapping
 - [`docs/STANDARDS-MAPPING.md`](./docs/STANDARDS-MAPPING.md) — OWASP / NIST / MCP cross-refs
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md) · [`SECURITY.md`](./SECURITY.md) · [`CLAUDE.md`](./CLAUDE.md)

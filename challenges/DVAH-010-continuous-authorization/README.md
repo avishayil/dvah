@@ -25,3 +25,10 @@ dvah test DVAH-010
 The exploit denies the revoked delete mid-run; the invariant test shows a revoked action
 is denied regardless of how many actions were allowed before it; the adversarial test puts
 the revoked action first, so a fix that only re-checks *later* actions still fails.
+
+## Artifacts
+This lab ships an authored `agents/task-runner.md` (its `AgentDefinition` — frontmatter +
+system prompt, with `capabilities` cross-validated against `environment/agents.yaml`) and a
+`prompts/system.md` base instruction layer. These are advisory reference-architecture
+overlays for the live/subagent path — nothing here reaches `action_hash` or changes the
+security verdict.

@@ -30,8 +30,8 @@ export type InvariantRef = { id: string; statement: string };
 
 export type RefModule = { module: string; contents: string };
 
-// File-based artifacts declared by a lab: loadable skills (SKILL.md), agent definitions
-// (agents/*.md), and the built-in tool catalog. Compact, values-only — no secrets.
+// File-based artifacts declared by a lab, mapped to the 2026 reference architecture
+// (Workflow→Agent→Skill→Tools+Resources, layered prompts). Compact, values-only — no secrets.
 export type Artifacts = {
   skills: {
     role: string;
@@ -48,7 +48,16 @@ export type Artifacts = {
     tools: string[];
     skills: string[];
   }[];
-  tools: { id: string; name: string; description: string }[];
+  tools: {
+    id: string;
+    name: string;
+    description: string;
+    side_effect: "read" | "write" | "destructive";
+    requires_approval: boolean;
+  }[];
+  resources: { id: string; name: string; trust: string; mime_type: string }[];
+  workflows: { id: string; driver: "code" | "llm"; steps: number }[];
+  prompts: { agent_id: string; layers: string[] }[];
 };
 
 export type ChallengeDetail = {

@@ -24,6 +24,12 @@ restore the primary property for *all* inputs, not just the demonstrated exploit
 | INV-13 | Authorization binds to the resolved operation, never the tool namespace | `dvah/security/policy.py` | broker step 3 (capability check) |
 | INV-14 | Runtime boundaries are contained — network egress + tool-server identity are enforced by the harness, not inherited; output crossing an external boundary is assigned trust, not believed | `dvah/providers/mcp_tools.py` + `harness/broker.py` | external tool boundary |
 
+> **INV-06 in the conformance battery.** INV-06 has two distinct failure modes, so the
+> conformance battery realizes it as two testable sub-invariants under the INV-06 umbrella:
+> **INV-06-instr** (DVAH-003 — retrieved data cannot silently become instructions) and
+> **INV-06-budget** (DVAH-006 — delegation cannot mint fresh budget). This is a battery-side
+> split only; the `scenario.yaml` labels are unchanged (both labs still declare `INV-06`).
+
 ## The central principle
 
 **Plans propose; `ActionEnvelope`s carry authority.** Every side-effectful operation

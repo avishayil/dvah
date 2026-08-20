@@ -24,3 +24,10 @@ dvah test DVAH-013
 ```
 The exploit/invariant/adversarial tests pass only when no interleaving lets more charges
 succeed than the limit allows.
+
+## Artifacts
+This lab ships an authored `agents/worker.md` (its `AgentDefinition` — frontmatter +
+system prompt, with `capabilities` cross-validated against `environment/agents.yaml`) and a
+`prompts/system.md` base instruction layer. These are advisory reference-architecture
+overlays for the live/subagent path — nothing here reaches `action_hash` or changes the
+security verdict.

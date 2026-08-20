@@ -41,3 +41,11 @@ dvah test DVAH-009
 The invariant test asserts, for *any* approved/requested pair, `granted ⊆ approved`; the
 exploit and adversarial tests assert an upgraded manifest (even one that keeps the pinned
 digest) can never widen the granted set without re-approval.
+
+## Artifacts
+This lab ships the `skills/` package described above (`SKILL.md` files + `registry.yaml`), an
+authored `agents/skill-runner.md` (its `AgentDefinition` — frontmatter + system prompt, with
+`capabilities` cross-validated against `environment/agents.yaml`), and a `prompts/system.md`
+base instruction layer. The skill manifests are load-bearing for this lab (the loader decides
+what to grant); the agent/prompt overlays are advisory — nothing there reaches `action_hash`
+or changes the security verdict.

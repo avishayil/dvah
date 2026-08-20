@@ -2,35 +2,37 @@
 import { Term } from "./term";
 import type { Artifacts, ChallengeDetail } from "@/lib/types";
 
-// Compact, read-only view of a lab's file-based artifacts: loadable skills (SKILL.md),
-// agent definitions (agents/*.md), and the built-in tool catalog. Gated behind
-// skills/agents presence — every lab has a tool catalog, so showing it unconditionally
-// would clutter labs that declare no skills or agents. When shown, tools are listed too.
+// Compact, read-only view of a lab's file-based artifacts, laid out along the 2026
+// reference architecture: Workflows → Agents → Skills → Tools + Resources, plus the
+// layered prompts each agent runs on. Gated behind having any structured artifact
+// (skill/agent/resource/workflow/prompt) — a bare tool catalog alone would clutter labs
+// that declare nothing else, so tools-only labs stay quiet. When shown, tools are listed too.
 function ArtifactsSection({ artifacts }: { artifacts?: Artifacts }) {
   if (!artifacts) return null;
-  const { skills, agents, tools } = artifacts;
-  if (skills.length === 0 && agents.length === 0) return null;
+  const { skills, agents, tools, resources, workflows, prompts } = artifacts;
+  const hasStructured =
+    skills.length > 0 ||
+    agents.length > 0 ||
+    resources.length > 0 ||
+    workflows.length > 0 ||
+    prompts.length > 0;
+  if (!hasStructured) return null;
   return (
     <section data-testid="artifacts-section">
       <h2 className="mb-1 text-xs uppercase tracking-wide text-muted">Artifacts</h2>
-      {skills.length > 0 && (
-        <div className="mb-3">
+      {workflows.length > 0 && (
+        <div className="mb-3" data-testid="artifacts-workflows">
           <div className="text-xs text-fg">
-            <Term id="skill">Skills</Term>
+            <Term id="workflow">Workflows</Term>
           </div>
           <ul className="mt-1 space-y-1">
-            {skills.map((s) => (
-              <li key={s.role} className="text-xs text-muted">
-                <span className="mono text-accent">
-                  {s.name}@{s.version}
-                </span>{" "}
-                ({s.role})
-                {s.requested_permissions.length > 0 && (
-                  <>
-                    {" · requests "}
-                    <span className="mono">{s.requested_permissions.join(", ")}</span>
-                  </>
-                )}
+            {workflows.map((w) => (
+              <li key={w.id} className="text-xs text-muted">
+                <span className="mono text-accent">{w.id}</span>
+                {" · "}
+                {w.driver === "code" ? "code-driven" : "LLM-driven"}
+                {" · "}
+                {w.steps} {w.steps === 1 ? "step" : "steps"}
               </li>
             ))}
           </ul>
@@ -60,6 +62,70 @@ function ArtifactsSection({ artifacts }: { artifacts?: Artifacts }) {
           </ul>
         </div>
       )}
+      {prompts.length > 0 && (
+        <div className="mb-3" data-testid="artifacts-prompts">
+          <div className="text-xs text-fg">
+            <Term id="prompt-layer">Prompt layers</Term>
+          </div>
+          <ul className="mt-1 space-y-1">
+            {prompts.map((p) => (
+              <li key={p.agent_id} className="text-xs text-muted">
+                <span className="mono text-accent">{p.agent_id}</span>
+                {p.layers.length > 0 && (
+                  <>
+                    {" · "}
+                    {p.layers.map((layer, i) => (
+                      <span key={layer}>
+                        {i > 0 && <span className="text-muted"> → </span>}
+                        <span className="mono rounded bg-panel-2 px-1">{layer}</span>
+                      </span>
+                    ))}
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {skills.length > 0 && (
+        <div className="mb-3">
+          <div className="text-xs text-fg">
+            <Term id="skill">Skills</Term>
+          </div>
+          <ul className="mt-1 space-y-1">
+            {skills.map((s) => (
+              <li key={s.role} className="text-xs text-muted">
+                <span className="mono text-accent">
+                  {s.name}@{s.version}
+                </span>{" "}
+                ({s.role})
+                {s.requested_permissions.length > 0 && (
+                  <>
+                    {" · requests "}
+                    <span className="mono">{s.requested_permissions.join(", ")}</span>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {resources.length > 0 && (
+        <div className="mb-3" data-testid="artifacts-resources">
+          <div className="text-xs text-fg">
+            <Term id="resource">Resources</Term>
+          </div>
+          <ul className="mt-1 space-y-1">
+            {resources.map((r) => (
+              <li key={r.id} className="text-xs text-muted">
+                <span className="mono text-accent">{r.id}</span>
+                {" · "}
+                <span className="mono rounded bg-panel-2 px-1">trust: {r.trust}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       {tools.length > 0 && (
         <div>
           <div className="text-xs text-fg">
@@ -69,6 +135,11 @@ function ArtifactsSection({ artifacts }: { artifacts?: Artifacts }) {
             {tools.map((t) => (
               <li key={t.id} className="text-xs text-muted">
                 <span className="mono text-accent">{t.id}</span>
+                {" · "}
+                <span className="mono">{t.side_effect}</span>
+                {t.requires_approval && (
+                  <span className="mono ml-1 rounded bg-panel-2 px-1 text-fg">approval</span>
+                )}
                 {t.description && ` — ${t.description}`}
               </li>
             ))}

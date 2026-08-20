@@ -17,3 +17,10 @@ dvah test DVAH-007
 ```
 Passes only when the approval that authorizes each action is bound to that action's own
 hash — a stale, mismatched approval must never authorize a different action.
+
+## Artifacts
+This lab ships an authored `agents/ops-agent.md` (its `AgentDefinition` — frontmatter +
+system prompt, with `capabilities` cross-validated against `environment/agents.yaml`) and a
+`prompts/system.md` base instruction layer. These are advisory reference-architecture
+overlays for the live/subagent path — nothing here reaches `action_hash` or changes the
+security verdict.
