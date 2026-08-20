@@ -73,7 +73,7 @@ class MCPToolProvider:
     def _egress_allowed(self, host: str) -> bool:
         return self.allow_hosts is None or host in self.allow_hosts
 
-    def _call_server(self, req: dict) -> dict:
+    def _call_server(self, req: dict) -> dict:  # pragma: no cover - spawns the mcp_stub subprocess boundary
         proc = subprocess.Popen(
             [sys.executable, "-m", "dvah.providers.mcp_stub"],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True,

@@ -41,7 +41,7 @@ jobs:
         run: |
           for dir in challenges/*/; do
             echo "=== $dir (solution) ==="
-            .venv/bin/python -m pytest "$dir/tests" -q \
+            .venv/bin/python -m pytest "$dir/evals" -q \
               -m "functional or exploit or invariant or adversarial" \
               --challenge="$dir" --solution
           done
@@ -52,7 +52,7 @@ jobs:
       - name: Coverage gate (dvah package)
         run: |
           .venv/bin/python -m pytest tests/ -m "unit or integration" \
-            --cov=dvah --cov-report=term-missing --cov-fail-under=80 -q
+            --cov=dvah --cov-report=term-missing --cov-fail-under=100 -q
 
   web:
     runs-on: ubuntu-latest

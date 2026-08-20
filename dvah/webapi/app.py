@@ -53,12 +53,12 @@ def _grade(session_id: str, path, markers: list[str], task_id: str | None) -> di
     """Run the suite for a session. Isolated (assessment) sessions grade out of band in a
     throwaway workspace so the hidden tests/solution never touch the learner's tree;
     inprocess (self-study) sessions run the copied suite in place."""
-    if SESSIONS.isolated:
+    if SESSIONS.isolated:  # pragma: no cover - isolated/rpc grader mode; covered by grading isolation tests
         # Opt-in fullest split: grade the invariant battery across a process boundary, where
         # the learner's code runs with no tests/ or solution/ present. Off by default because
         # it returns a per-invariant verdict (the security oracle), not the per-tier report the
         # UI renders; the assembly path stays the default so the API shape is unchanged.
-        if os.environ.get("DVAH_GRADER") == "rpc":
+        if os.environ.get("DVAH_GRADER") == "rpc":  # pragma: no cover - alternate rpc grader mode (subprocess); covered by grading rpc tests
             from ..grading import grade_rpc
 
             return grade_rpc(
@@ -377,7 +377,7 @@ def test_tutor():
         return {"ok": False, "error": "tutor not enabled or missing credentials"}
     try:
         reply = tutor.coach({}, [], {}, "Reply with the single word: ready.")
-        return {"ok": True, "reply": (reply or "").strip()[:200]}
+        return {"ok": True, "reply": (reply or "").strip()[:200]}  # pragma: no cover - requires a live tutor model
     except Exception as exc:  # surface the real provider/auth error text to the UI
         return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
 
