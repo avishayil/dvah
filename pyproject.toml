@@ -69,3 +69,34 @@ markers = [
     "invariant: property test over generated actions",
     "adversarial: hidden mutations, run only under --adversarial",
 ]
+filterwarnings = [
+    # FastAPI/Starlette TestClient emits an upstream StarletteDeprecationWarning about httpx
+    # at import time; matched by message so the category/module don't matter. Not ours to fix.
+    "ignore:Using .httpx. with .starlette.testclient. is deprecated",
+]
+
+[tool.coverage.run]
+branch = false
+# Omit code that cannot execute under the CI unit+integration gate by design (documented
+# in CLAUDE.md: e2e/live-model paths stay out of CI). Each needs an external SDK, a live
+# server, a subprocess child context, or a real model key — exercised only by e2e/live runs.
+omit = [
+    "dvah/providers/anthropic_model.py",   # vendor SDK (lazy import), live-only
+    "dvah/providers/openai_model.py",      # vendor SDK (lazy import), live-only
+    "dvah/providers/bedrock_model.py",     # vendor SDK (lazy import), live-only
+    "dvah/providers/http_tools.py",        # needs the live FastAPI services (e2e-only)
+    "dvah/providers/mcp_stub.py",          # MCP subprocess child entrypoint
+    "dvah/webapi/tutor.py",                # needs a live model API key
+    "dvah/webapi/_pytest_report.py",       # pytest plugin loaded in the sandboxed subprocess
+]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "\\.\\.\\.",              # Protocol/abstract method stubs
+    "@(abc\\.)?abstractmethod",
+]

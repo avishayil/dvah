@@ -106,7 +106,7 @@ def _readonly_files(root: Path) -> list[dict]:
             )
     plans = root / "workflows" / "plans.yaml"
     if not plans.exists():
-        plans = env / "plans.yaml"
+        plans = env / "plans.yaml"  # pragma: no cover - legacy fallback; labs use workflows/
     if plans.exists():
         rel = plans.relative_to(root).as_posix()
         out.append({"path": rel, "contents": plans.read_text(), "writable": False})
@@ -142,7 +142,7 @@ def _artifact_files(root: Path) -> list[dict]:
         out.append({"path": rel, "contents": md.read_text(), "writable": False})
     tools = root / "environment" / "tools.yaml"
     if tools.exists():
-        out.append({"path": "environment/tools.yaml",
+        out.append({"path": "environment/tools.yaml",  # pragma: no cover - no lab ships environment/tools.yaml
                     "contents": tools.read_text(), "writable": False})
     return out
 
@@ -150,7 +150,7 @@ def _artifact_files(root: Path) -> list[dict]:
 def _tasks(root: Path) -> list[str]:
     plans = root / "workflows" / "plans.yaml"
     if not plans.exists():
-        plans = root / "environment" / "plans.yaml"
+        plans = root / "environment" / "plans.yaml"  # pragma: no cover - legacy fallback; labs use workflows/
     if not plans.exists():
         return []
     import yaml
@@ -198,7 +198,7 @@ class SessionManager:
             raise KeyError(session_id)
         root = (self._base / session_id).resolve()
         if not root.is_relative_to(self._base.resolve()):
-            raise KeyError(session_id)
+            raise KeyError(session_id)  # pragma: no cover - path-escape guard (uuid dirs never escape)
         return root
 
     def _remove_locked(self, session_id: str) -> None:

@@ -101,7 +101,7 @@ class SubprocessRunner:
                 stderr=subprocess.STDOUT, text=True, start_new_session=True,
             )
             if sys.platform.startswith("linux"):
-                popen_kwargs["preexec_fn"] = _rlimits
+                popen_kwargs["preexec_fn"] = _rlimits  # pragma: no cover - POSIX rlimits (platform-specific)
             proc = subprocess.Popen(self._command(session_dir, markers, report_path), **popen_kwargs)
             try:
                 stdout, _ = proc.communicate(timeout=self.timeout)
@@ -127,7 +127,7 @@ class SubprocessRunner:
             return []
 
 
-class DockerRunner(SubprocessRunner):
+class DockerRunner(SubprocessRunner):  # pragma: no cover - container runtime; deploy-only, needs Docker
     """Run the suite inside a locked-down container (untrusted-code hosting)."""
 
     IMAGE = os.environ.get("DVAH_RUNNER_IMAGE", "dvah-runner:latest")
@@ -164,5 +164,5 @@ class DockerRunner(SubprocessRunner):
 
 def get_runner() -> SubprocessRunner:
     if os.environ.get("DVAH_RUNNER") == "docker":
-        return DockerRunner()
+        return DockerRunner()  # pragma: no cover - selected only when DVAH_RUNNER=docker
     return SubprocessRunner()

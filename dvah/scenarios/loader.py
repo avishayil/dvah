@@ -104,7 +104,7 @@ def _load_slot(challenge_dir: Path, ref: str, prefix: str):
     module_name = f"{prefix}_{module_ref.replace('.', '_')}"
     spec = importlib.util.spec_from_file_location(module_name, file_path)
     if spec is None or spec.loader is None:
-        raise ImportError(f"cannot load {ref} from {file_path}")
+        raise ImportError(f"cannot load {ref} from {file_path}")  # pragma: no cover - defensive; spec is non-None for real paths
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return getattr(module, class_name)()
@@ -223,11 +223,11 @@ def _load_tools_catalog(env_dir: Path) -> dict:
 
 
 def _build_tools(transport: str, files: FileStore, github: GithubStore):
-    if transport == "http":
+    if transport == "http":  # pragma: no cover - live HTTP services (e2e)
         from ..providers.http_tools import HttpToolProvider  # lazy: needs httpx + services
 
         return HttpToolProvider()
-    if transport == "router":
+    if transport == "router":  # pragma: no cover - MCP subprocess router (e2e)
         # Multiplex native (files/github) + a real MCP subprocess boundary under one slot,
         # so a lab can use both at once. The broker applies INV-14 trust per-namespace.
         from ..providers.mcp_tools import MCPToolProvider

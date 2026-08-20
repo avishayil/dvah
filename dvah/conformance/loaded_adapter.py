@@ -33,7 +33,7 @@ def _mk_budget(cfg, limit: int):
     """Rebuild the loaded budget class with the probe's limit (reflects a broken budget)."""
     try:
         return type(cfg.budget)(limit=limit)
-    except Exception:
+    except Exception:  # pragma: no cover - defensive fallback for budgets with a custom ctor
         return cfg.budget
 
 
@@ -102,7 +102,7 @@ class LoadedHarnessAdapter(BuiltinAdapter):
         # Redact with the challenge's secret broker (reflects a broken redactor, INV-04).
         try:
             broker = type(self._cfg.secrets)(credentials={f"s{i}": v for i, v in enumerate(secrets)})
-        except Exception:
+        except Exception:  # pragma: no cover - defensive fallback for brokers with a custom ctor
             broker = self._cfg.secrets
         model_ctx = broker.redact_for_model(compiled.to_model_context())
         return CompiledView(
@@ -121,7 +121,7 @@ class LoadedHarnessAdapter(BuiltinAdapter):
             reg = RevocationRegistry(revoked_actions=set(revoked))
             try:
                 policy = type(self._cfg.policy)(revocation=reg)
-            except Exception:
+            except Exception:  # pragma: no cover - defensive fallback for policies with a custom ctor
                 policy = self._cfg.policy
         env = build_envelope(_ctx(caps, Constraints()),
                              Operation(namespace=namespace, action=action, resource=resource))

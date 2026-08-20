@@ -124,7 +124,7 @@ class _ExternalTrustedProvider:
     is_external = True
 
     def supports(self, namespace: str) -> bool:
-        return namespace == "files"
+        return namespace == "files"  # pragma: no cover - supports() only consulted via a router
 
     def invoke(self, operation, credential=None):
         from ..models.provenance import TrustLevel
@@ -158,8 +158,8 @@ def probe_inv01(flags) -> bool:
     ctx = _ctx(_cap_set([("files", "read")]), Constraints())
     try:
         h.run_task(ctx, "t")
-    except Denied:
-        pass
+    except Denied:  # pragma: no cover - probe reads are pre-authorized; never denies
+        pass  # pragma: no cover - probe reads are pre-authorized; defensive
     # Occurrence-level complete mediation: no executed occurrence lacks its own authorization.
     return not h.cfg.trace.unauthorized_executions()
 
@@ -346,7 +346,7 @@ def probe_inv12(flags) -> bool:
     tracker.charge(ctx)
     try:
         tracker.charge(ctx)
-        return False  # a second charge past the limit means the invariant failed
+        return False  # a second charge past the limit means the invariant failed  # pragma: no cover - builtin budget always denies the 2nd charge
     except Denied:
         return True
 

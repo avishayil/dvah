@@ -27,7 +27,7 @@ def _module_source(module: str) -> str | None:
         return None
     try:
         return Path(spec.origin).read_text()[:_REF_CAP]
-    except OSError:
+    except OSError:  # pragma: no cover - unreadable source file
         return None
 
 
@@ -180,7 +180,7 @@ def briefing(challenge_id: str) -> dict:
     readme = challenge_dir / "README.md"
     plans = challenge_dir / "workflows" / "plans.yaml"
     if not plans.exists():
-        plans = challenge_dir / "environment" / "plans.yaml"
+        plans = challenge_dir / "environment" / "plans.yaml"  # pragma: no cover - legacy fallback; all labs now use workflows/
     import yaml
 
     tasks = list((yaml.safe_load(plans.read_text()) or {}).keys()) if plans.exists() else []

@@ -44,7 +44,7 @@ def reconcile(claimed: Iterable[SideEffect], observed: Iterable[SideEffect],
     return ConformanceResult(invariant, ok, detail)
 
 
-def read_recorder(base_url: str) -> list[dict]:
+def read_recorder(base_url: str) -> list[dict]:  # pragma: no cover - reads a live service recorder (e2e)
     """Read a service's authoritative side-effect log (lazy httpx import)."""
     import httpx
 

@@ -42,7 +42,7 @@ def _print_learn_briefing(challenge_dir: Path, spec: dict) -> None:
     if readme.exists():
         console.print(Markdown(readme.read_text()))
     else:
-        console.print(f"[bold]{spec['id']}[/bold] — {spec.get('title', '')}")
+        console.print(f"[bold]{spec['id']}[/bold] — {spec.get('title', '')}")  # pragma: no cover - lab without README (all ship one)
     console.print(
         "\n[dim]docs/INVARIANTS.md and docs/ARCHITECTURE.md explain the invariants and "
         "the harness/security split.[/dim]"
@@ -169,12 +169,12 @@ def _grader_observed_line() -> str:
     except Exception:
         return "[yellow]grader-observed:[/yellow] services not reachable — skipped " \
                "(start them with `docker compose --profile services up`)"
-    HttpToolProvider().invoke(Operation(namespace="files", action="delete",
+    HttpToolProvider().invoke(Operation(namespace="files", action="delete",  # pragma: no cover - live services only
                                         resource="/tmp/a", parameters={}))
-    observed = observed_side_effects(read_recorder(files))
-    res = reconcile([("files", "delete", "/tmp/a")], observed)
-    mark = "[green]✓[/green]" if res.holds else "[red]✗[/red]"
-    return f"  {mark} {res.invariant:14} {res.detail}"
+    observed = observed_side_effects(read_recorder(files))  # pragma: no cover - live services only
+    res = reconcile([("files", "delete", "/tmp/a")], observed)  # pragma: no cover
+    mark = "[green]✓[/green]" if res.holds else "[red]✗[/red]"  # pragma: no cover
+    return f"  {mark} {res.invariant:14} {res.detail}"  # pragma: no cover
 
 
 @app.command()

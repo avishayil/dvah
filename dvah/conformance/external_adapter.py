@@ -19,7 +19,7 @@ from .adapter import ActionDescriptor, AdapterDecision, CompiledView, MemoryItem
 def _leaves(scripts: dict, task: str, seen: frozenset = frozenset()) -> list[tuple[str, str]]:
     """Flatten a plan into leaf (namespace, action) tool steps, expanding delegations."""
     if task in seen:
-        return []
+        return []  # pragma: no cover - delegation-cycle guard
     out: list[tuple[str, str]] = []
     for step in scripts.get(task, []):
         ns, action = step["namespace"], step["action"]

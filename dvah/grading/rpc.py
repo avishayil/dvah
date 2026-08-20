@@ -34,7 +34,7 @@ def _dec_caps(lst) -> CapabilitySet:
 
 # ------------------------------------------------------------------ server side
 
-class AdapterServer:
+class AdapterServer:  # pragma: no cover - runs in a subprocess child; not recorded by parent coverage
     """Serves a loaded challenge's ``HarnessAdapter`` over stdio JSON (one line each way)."""
 
     def __init__(self, workspace: str, use_solution: bool) -> None:
@@ -101,7 +101,7 @@ class AdapterServer:
 
 # ------------------------------------------------------------------ client side
 
-class RpcAdapter:
+class RpcAdapter:  # pragma: no cover - marshals to an AdapterServer subprocess; exercised only in rpc grader mode
     """Implements ``HarnessAdapter`` by marshalling each call to an ``AdapterServer`` subprocess."""
 
     name = "rpc"
@@ -194,7 +194,7 @@ class RpcAdapter:
         return self._call("external_tool_trust", declared_trust=declared_trust)
 
 
-def _main(argv: list[str]) -> None:
+def _main(argv: list[str]) -> None:  # pragma: no cover - subprocess entrypoint
     use_solution = "--solution" in argv
     positional = [a for a in argv if not a.startswith("--")]
     AdapterServer(positional[0], use_solution=use_solution).serve()
