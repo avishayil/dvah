@@ -23,8 +23,8 @@ from ..models.runtime import Constraints
 from ..observability.trace import TraceLog
 from ..providers.native_tools import NativeToolProvider
 from ..providers.reactive import ContextActionModel
-from ..security.decision import Denied, Verdict
-from ..services.memory import FileStore, GithubStore
+from ..guardrails.decision import Denied, Verdict
+from ..services.world_state import FileStore, GithubStore
 from .adapter import CompiledView, MemoryItem, RunOutcome
 from .builtin_adapter import BuiltinAdapter, _ctx
 
@@ -113,7 +113,7 @@ class LoadedHarnessAdapter(BuiltinAdapter):
     def authorize(self, caps, namespace, action, resource, revoked=frozenset()):
         from ..models.operation import Operation
         from ..harness.resolver import build_envelope
-        from ..security.revocation import RevocationRegistry
+        from ..guardrails.revocation import RevocationRegistry
         from .adapter import AdapterDecision
 
         policy = self._cfg.policy

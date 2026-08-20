@@ -14,15 +14,15 @@ from ..models.runtime import Constraints
 from ..observability.trace import TraceLog
 from ..providers.model import ModelProvider
 from ..providers.tools import ToolProvider
-from ..security.approvals import ApprovalService
-from ..security.capabilities import CapabilityResolver
-from ..security.policy import PolicyEngine
-from ..security.budget import BudgetTracker, BuiltinBudgetTracker
-from ..security.provenance import ProvenanceTracker
-from ..security.secrets import SecretBroker
-from ..security.revocation import RevocationRegistry
-from ..security.skills import BuiltinSkillLoader, SkillLoader
-from ..services.memory_store import BuiltinMemoryProvider, MemoryProvider
+from ..guardrails.approvals import ApprovalService
+from ..guardrails.capabilities import CapabilityResolver
+from ..guardrails.policy import PolicyEngine
+from ..guardrails.budget import BudgetTracker, BuiltinBudgetTracker
+from ..guardrails.provenance import ProvenanceTracker
+from ..guardrails.secrets import SecretBroker
+from ..guardrails.revocation import RevocationRegistry
+from ..guardrails.skills import BuiltinSkillLoader, SkillLoader
+from ..memory.store import BuiltinMemoryProvider, MemoryProvider
 from .compiler import BuiltinContextCompiler, ContextCompiler
 from .executor import Executor
 from .scheduler import Scheduler, SequentialScheduler

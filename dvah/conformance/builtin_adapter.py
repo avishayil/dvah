@@ -24,17 +24,17 @@ from ..models.skill import SkillManifest
 from ..observability.trace import TraceLog
 from ..providers.native_tools import NativeToolProvider
 from ..providers.reactive import ContextActionModel
-from ..security.approvals import BuiltinApprovalService
-from ..security.budget import BuiltinBudgetTracker
-from ..security.capabilities import BuiltinCapabilityResolver
-from ..security.decision import Denied, Verdict
-from ..security.policy import BuiltinPolicy
-from ..security.provenance import BuiltinProvenanceTracker
-from ..security.revocation import RevocationRegistry
-from ..security.secrets import BuiltinSecretBroker
-from ..security.skills import BuiltinSkillLoader
-from ..services.memory import FileStore, GithubStore
-from ..services.memory_store import BuiltinMemoryProvider, MemoryStore
+from ..guardrails.approvals import BuiltinApprovalService
+from ..guardrails.budget import BuiltinBudgetTracker
+from ..guardrails.capabilities import BuiltinCapabilityResolver
+from ..guardrails.decision import Denied, Verdict
+from ..guardrails.policy import BuiltinPolicy
+from ..guardrails.provenance import BuiltinProvenanceTracker
+from ..guardrails.revocation import RevocationRegistry
+from ..guardrails.secrets import BuiltinSecretBroker
+from ..guardrails.skills import BuiltinSkillLoader
+from ..services.world_state import FileStore, GithubStore
+from ..memory.store import BuiltinMemoryProvider, MemoryStore
 from .adapter import ActionDescriptor, AdapterDecision, CompiledView, MemoryItem, RunOutcome
 
 _CLOCK = "2026-01-01T00:00:00Z"

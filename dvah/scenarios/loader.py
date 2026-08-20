@@ -37,13 +37,13 @@ from ..harness.compiler import BuiltinContextCompiler
 from ..observability.trace import TraceLog
 from ..providers.native_tools import NativeToolProvider
 from ..providers.reactive import ContextActionModel
-from ..security.approvals import BuiltinApprovalService
-from ..security.budget import BuiltinBudgetTracker
-from ..security.capabilities import BuiltinCapabilityResolver
-from ..security.policy import BuiltinPolicy
-from ..security.provenance import BuiltinProvenanceTracker
-from ..security.secrets import BuiltinSecretBroker
-from ..services.memory import FileStore, GithubStore
+from ..guardrails.approvals import BuiltinApprovalService
+from ..guardrails.budget import BuiltinBudgetTracker
+from ..guardrails.capabilities import BuiltinCapabilityResolver
+from ..guardrails.policy import BuiltinPolicy
+from ..guardrails.provenance import BuiltinProvenanceTracker
+from ..guardrails.secrets import BuiltinSecretBroker
+from ..services.world_state import FileStore, GithubStore
 
 
 @dataclass(frozen=True)
