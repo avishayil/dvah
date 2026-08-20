@@ -4,6 +4,8 @@
   action: send
   name: email_send
   description: Send an email to a recipient.
+  side_effect: write
+  requires_approval: true
   input_schema:
     type: object
     properties:

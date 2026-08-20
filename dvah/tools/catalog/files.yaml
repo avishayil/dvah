@@ -5,15 +5,22 @@
   action: read
   name: files_read
   description: Read the contents of a file at a path.
+  side_effect: read
   input_schema:
     type: object
     properties:
       resource: {type: string, description: "absolute file path, e.g. /prod/customer.db"}
     required: [resource]
+  output_schema:
+    type: object
+    properties:
+      contents: {type: string}
 - namespace: files
   action: delete
   name: files_delete
   description: Delete a file at a path.
+  side_effect: destructive
+  requires_approval: true
   input_schema:
     type: object
     properties:
@@ -23,6 +30,7 @@
   action: rename
   name: files_rename
   description: Rename or move a file to a new path.
+  side_effect: write
   input_schema:
     type: object
     properties:

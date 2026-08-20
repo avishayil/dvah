@@ -43,3 +43,11 @@ class AgentDefinition(BaseModel):
     skills: tuple[str, ...] = ()
     #: The system-prompt body (Markdown), injected only on the live path.
     instructions: str = ""
+    #: Structured OUTPUT schema (JSON Schema) the agent is expected to produce. Advisory.
+    output_schema: dict = {}
+    #: Resource ids available to the agent (read-only knowledge). Advisory.
+    resources: tuple[str, ...] = ()
+    #: Memory namespace refs the agent may recall from (INV-10 scoping hint). Advisory.
+    memory: tuple[str, ...] = ()
+    #: Ordered prompt-layer refs (system→agent→skill→task). Advisory.
+    prompts: tuple[str, ...] = ()

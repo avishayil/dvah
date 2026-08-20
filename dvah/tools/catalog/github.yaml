@@ -4,6 +4,7 @@
   action: issue.read
   name: github_issue_read
   description: List issues for a repository.
+  side_effect: read
   input_schema:
     type: object
     properties:
@@ -13,6 +14,7 @@
   action: issue.comment
   name: github_issue_comment
   description: Post a comment on an issue.
+  side_effect: write
   input_schema:
     type: object
     properties:
@@ -24,6 +26,8 @@
   action: repository.delete
   name: github_repository_delete
   description: Delete a repository.
+  side_effect: destructive
+  requires_approval: true
   input_schema:
     type: object
     properties:

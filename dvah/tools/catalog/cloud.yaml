@@ -4,6 +4,7 @@
   action: instance.list
   name: cloud_instance_list
   description: List cloud compute instances.
+  side_effect: read
   input_schema:
     type: object
     properties: {}
@@ -11,6 +12,8 @@
   action: instance.terminate
   name: cloud_instance_terminate
   description: Terminate a cloud compute instance.
+  side_effect: destructive
+  requires_approval: true
   input_schema:
     type: object
     properties:
