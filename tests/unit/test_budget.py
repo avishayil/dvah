@@ -1,7 +1,7 @@
 import pytest
 
-from dvah.security.budget import BuiltinBudgetTracker
-from dvah.security.decision import Denied
+from dvah.guardrails.budget import BuiltinBudgetTracker
+from dvah.guardrails.decision import Denied
 
 
 @pytest.mark.unit

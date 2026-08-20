@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dvah.security.provenance import BuiltinProvenanceTracker
+from dvah.guardrails.provenance import BuiltinProvenanceTracker
 
 
 class VulnerableProvenanceTracker(BuiltinProvenanceTracker):

@@ -4,8 +4,8 @@ from pydantic import ValidationError
 from dvah.models.capability import Capability, CapabilitySet
 from dvah.models.identity import Actor, DelegationChain
 from dvah.models.operation import Operation
-from dvah.security.decision import Verdict
-from dvah.security.policy import BuiltinPolicy
+from dvah.guardrails.decision import Verdict
+from dvah.guardrails.policy import BuiltinPolicy
 
 pytestmark = pytest.mark.unit
 

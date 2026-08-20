@@ -7,7 +7,7 @@ from dvah.models.prompt import PromptLayer, PromptScope, PromptStack
 from dvah.models.resource import Resource
 from dvah.models.tool_spec import SideEffect, ToolSpec
 from dvah.models.workflow import Driver, StepKind, Workflow, WorkflowStep
-from dvah.security.policy import DEFAULT_APPROVAL_ACTIONS, approval_actions_from_catalog
+from dvah.guardrails.policy import DEFAULT_APPROVAL_ACTIONS, approval_actions_from_catalog
 
 
 @pytest.mark.unit

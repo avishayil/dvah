@@ -1,7 +1,7 @@
 import pytest
 
 from dvah.models.provenance import ProvenanceRecord, TrustLevel
-from dvah.security.provenance import BuiltinProvenanceTracker
+from dvah.guardrails.provenance import BuiltinProvenanceTracker
 
 pytestmark = pytest.mark.unit
 

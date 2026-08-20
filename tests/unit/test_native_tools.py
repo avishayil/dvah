@@ -3,7 +3,7 @@ import pytest
 from dvah.models.operation import Operation
 from dvah.models.provenance import TrustLevel
 from dvah.providers.native_tools import NativeToolProvider
-from dvah.services.memory import FileStore, GithubStore
+from dvah.services.world_state import FileStore, GithubStore
 
 pytestmark = pytest.mark.unit
 

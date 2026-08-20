@@ -1,6 +1,6 @@
 import pytest
 
-from dvah.security.decision import Decision, Denied, Verdict
+from dvah.guardrails.decision import Decision, Denied, Verdict
 
 pytestmark = pytest.mark.unit
 

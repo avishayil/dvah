@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dvah.security.secrets import BuiltinSecretBroker
+from dvah.guardrails.secrets import BuiltinSecretBroker
 
 _SECRET = "AKIA-SECRET-123"
 

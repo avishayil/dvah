@@ -7,7 +7,7 @@ permission-diff is produced — so a skill "update" silently widens capabilities
 from __future__ import annotations
 
 from dvah.models.capability import CapabilitySet
-from dvah.security.skills import SkillLoadResult
+from dvah.guardrails.skills import SkillLoadResult
 
 
 class AutoAcceptSkillLoader:

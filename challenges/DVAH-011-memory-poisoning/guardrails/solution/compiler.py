@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dvah.harness.compiler import DATA, INSTRUCTION, CompiledContext, ContextItem
 from dvah.models.provenance import TrustLevel
-from dvah.services.memory_store import BuiltinMemoryProvider, MemoryStore
+from dvah.memory.store import BuiltinMemoryProvider, MemoryStore
 
 _CLOCK = "2026-01-01T00:00:00Z"
 

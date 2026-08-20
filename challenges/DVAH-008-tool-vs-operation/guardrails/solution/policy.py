@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dvah.security.policy import BuiltinPolicy
+from dvah.guardrails.policy import BuiltinPolicy
 
 
 class FixedPolicy(BuiltinPolicy):

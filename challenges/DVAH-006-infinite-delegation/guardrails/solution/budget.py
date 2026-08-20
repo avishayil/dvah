@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dvah.security.budget import BuiltinBudgetTracker
+from dvah.guardrails.budget import BuiltinBudgetTracker
 
 
 class FixedBudgetTracker(BuiltinBudgetTracker):

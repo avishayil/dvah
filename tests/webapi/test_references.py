@@ -14,7 +14,7 @@ def test_briefing_includes_referenced_harness_modules():
     refs = {r["module"]: r["contents"] for r in b["references"]}
     # DVAH-001's vulnerable executor imports these — learners must be able to read them.
     assert "dvah.harness.resolver" in refs
-    assert "dvah.security.decision" in refs
+    assert "dvah.guardrails.decision" in refs
     assert "def resolve_operation" in refs["dvah.harness.resolver"]
     assert all(r["contents"] for r in b["references"])
 

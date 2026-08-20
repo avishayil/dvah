@@ -21,12 +21,12 @@ from dvah.models.runtime import Constraints, RuntimeContext
 from dvah.observability.trace import TraceLog
 from dvah.providers.deterministic import DeterministicModel
 from dvah.providers.native_tools import NativeToolProvider
-from dvah.security.approvals import BuiltinApprovalService
-from dvah.security.capabilities import BuiltinCapabilityResolver
-from dvah.security.policy import BuiltinPolicy
-from dvah.security.provenance import BuiltinProvenanceTracker
-from dvah.security.secrets import BuiltinSecretBroker
-from dvah.services.memory import FileStore, GithubStore
+from dvah.guardrails.approvals import BuiltinApprovalService
+from dvah.guardrails.capabilities import BuiltinCapabilityResolver
+from dvah.guardrails.policy import BuiltinPolicy
+from dvah.guardrails.provenance import BuiltinProvenanceTracker
+from dvah.guardrails.secrets import BuiltinSecretBroker
+from dvah.services.world_state import FileStore, GithubStore
 
 CLOCK = "2026-01-01T00:00:00Z"
 

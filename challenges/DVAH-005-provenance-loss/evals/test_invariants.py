@@ -8,7 +8,7 @@ from dvah.models.provenance import (
     ProvenanceTag,
     TrustLevel,
 )
-from dvah.security.provenance import BuiltinProvenanceTracker
+from dvah.guardrails.provenance import BuiltinProvenanceTracker
 
 # INV-05 is more than "N tags in → N tags out". A tracker that preserved the *count*
 # while corrupting source/tenant/timestamp, mis-routing the instruction-vs-data channel,

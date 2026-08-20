@@ -7,8 +7,8 @@ import pytest
 from dvah.harness.compiler import INSTRUCTION, CompiledContext, ContextItem
 from dvah.models.capability import Capability, CapabilitySet
 from dvah.providers.reactive import ContextActionModel
-from dvah.security.budget import BuiltinBudgetTracker
-from dvah.security.decision import Denied
+from dvah.guardrails.budget import BuiltinBudgetTracker
+from dvah.guardrails.decision import Denied
 
 _INJECTED_ISSUE = {
     "id": 418,

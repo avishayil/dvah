@@ -2,7 +2,7 @@ import pytest
 
 from dvah.harness.resolver import build_envelope, resolve_operation
 from dvah.providers.model import PlanStep
-from dvah.security.decision import Verdict
+from dvah.guardrails.decision import Verdict
 
 
 def _authorize(policy, ctx, namespace, action, resource):
