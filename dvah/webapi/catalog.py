@@ -143,10 +143,35 @@ def _artifacts(challenge_dir: Path) -> dict:
         for a in loaded.agent_defs.values()
     ]
     tools = [
-        {"id": s.id, "name": s.name, "description": s.description}
+        {
+            "id": s.id,
+            "name": s.name,
+            "description": s.description,
+            "side_effect": s.side_effect.value,
+            "requires_approval": s.requires_approval,
+        }
         for s in sorted(loaded.tools_catalog.values(), key=lambda s: s.id)
     ]
-    return {"skills": skills, "agents": agents, "tools": tools}
+    resources = [
+        {"id": r.id, "name": r.name, "trust": r.trust.value, "mime_type": r.mime_type}
+        for r in sorted(loaded.resources.values(), key=lambda r: r.id)
+    ]
+    workflows = [
+        {"id": w.id, "driver": w.driver.value, "steps": len(w.steps)}
+        for w in sorted(loaded.workflows.values(), key=lambda w: w.id)
+    ]
+    prompts = [
+        {"agent_id": aid, "layers": [layer.scope.value for layer in stack.layers]}
+        for aid, stack in sorted(loaded.prompts.items())
+    ]
+    return {
+        "skills": skills,
+        "agents": agents,
+        "tools": tools,
+        "resources": resources,
+        "workflows": workflows,
+        "prompts": prompts,
+    }
 
 
 def briefing(challenge_id: str) -> dict:
