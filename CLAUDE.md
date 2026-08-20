@@ -15,9 +15,18 @@ authorization/approval/capabilities/provenance/secrets all bind to that envelope
 
 ## Repository map
 
-- `dvah/models/` — pure **frozen** Pydantic data (`ActionEnvelope` + parts). No behavior.
-- `dvah/security/` — first-class, **swappable** security services; each is a `Protocol` +
-  a correct `Builtin*` default. Challenges override these with broken versions.
+- `dvah/models/` — pure **frozen** Pydantic data (`ActionEnvelope` + parts, plus the
+  reference primitives `Resource`, `Workflow`, `PromptStack`). No behavior.
+- `dvah/guardrails/` — first-class, **swappable** security services (policy, approvals,
+  capabilities, budget, secrets, provenance, revocation, skills, decision); each is a
+  `Protocol` + a correct `Builtin*` default. Challenges override these with broken versions.
+  (Renamed from `dvah/security/`, which stays as a re-export compat shim — to be removed later.)
+- `dvah/memory/` — agent memory (`store.py`; reference Memory layer). World state lives in
+  `dvah/services/world_state.py` (FileStore/GithubStore). Both keep compat shims at their old
+  paths (`dvah/services/memory_store.py`, etc.).
+- `dvah/resources/`, `dvah/workflows/`, `dvah/prompts/` — thin domain homes over the new
+  `Resource`/`Workflow`/`PromptStack` models + parsers; `dvah/schemas/` is a dependency-free
+  output-schema validator. All advisory — never reaches `action_hash`.
 - `dvah/harness/` — runtime plumbing: `broker.py` (the authorize→approve→execute gate),
   `executor.py`, `agent.py` (delegation), `context.py` (`RunContext`), `loop.py`
   (`Harness.run_session` drives the agent loop: `ModelSession.next → ModelTurn`, then each
@@ -58,8 +67,9 @@ authorization/approval/capabilities/provenance/secrets all bind to that envelope
 - `dvah/scenarios/loader.py` + `catalog.py` — load a challenge into a runnable harness by
   swapping named slots with the challenge's `vulnerable/` or `solution/` code. The
   `LoadedChallenge` also exposes `.skills` (role/name → `SkillManifest`), `.agent_defs`
-  (agent_id → `AgentDefinition`), and `.tools_catalog` (id → `ToolSpec`), parsed from the
-  file-based artifacts below.
+  (agent_id → `AgentDefinition`), `.tools_catalog` (id → `ToolSpec`), `.resources` (id →
+  `Resource`), `.workflows` (task_id → descriptive `Workflow`), and `.prompts` (agent_id →
+  `PromptStack`), parsed from the file-based artifacts below.
 - `challenges/DVAH-00N-*/` — the labs (`scenario.yaml`, `README.md`, `vulnerable/`, hidden
   `solution/`, `environment/*.yaml`, `tests/`, `walkthrough.yaml`).
 - `services/` — FastAPI mock external systems; `web/` — Next.js browser IDE.
@@ -90,8 +100,8 @@ docker compose --profile services up --build            # + mock services :8001-
 
 - **Immutability**: models are `frozen=True`; update via `model_copy`/`replace`, never
   mutate. `RunContext` is threaded, copy-on-write.
-- **Small files** (~150 lines), organized by feature; `models/` = data, `security/` +
-  `harness/` = behavior. The harness/security split is load-bearing — several labs are
+- **Small files** (~150 lines), organized by feature; `models/` = data, `guardrails/` +
+  `harness/` = behavior. The harness/guardrails split is load-bearing — several labs are
   "the check was put in the wrong component."
 - **Test markers**: `unit`, `integration` (CI), `functional`/`exploit`/`invariant`/
   `adversarial` (per lab), `e2e` (manual, excluded via `-m 'not e2e'`). 80% coverage gate
@@ -104,7 +114,11 @@ docker compose --profile services up --build            # + mock services :8001-
 1. Copy the DVAH-001/002 shape: `scenario.yaml` (declare `overrides` +
    `solution_overrides` for the one broken slot + its declared `invariants`), `README.md`,
    `vulnerable/`, `solution/`, `environment/{users,agents,resources,plans}.yaml`, and
-   `tests/{test_functional,test_exploit,test_invariants,test_adversarial}.py`.
+   `tests/{test_functional,test_exploit,test_invariants,test_adversarial}.py`. Every lab now
+   also ships an authored `agents/<root>.md` (AgentDefinition — frontmatter
+   name/description/model/tools/capabilities/delegation + system-prompt body) and a
+   `prompts/system.md` base instruction layer as standard; DVAH-009 additionally ships a
+   `skills/` package (`SKILL.md` + `registry.yaml`).
 2. Author `walkthrough.yaml` (tiers nudge→concept→pointer→solution + guided `steps`).
 3. Verify: vulnerable = red on exploit+invariant(+adversarial), `--solution` = all green.
 

@@ -5,6 +5,10 @@ agent runtime should hold. The **conformance suite** lifts the invariant checks 
 runtime-agnostic `HarnessAdapter` so the same battery can probe **any** runtime: DVAH's
 builtin harness, or an external one (LangGraph, CrewAI, an MCP server) via a thin shim.
 
+> In the reference-architecture overlay (`docs/ARCHITECTURE.md`), the conformance battery and
+> the per-lab test suites are DVAH's realization of the cross-cutting **Evals** layer — the
+> repeatable, runtime-agnostic checks that a runtime holds its security invariants.
+
 > **Scope, honestly.** By default the adapter *reports its own observables* (executed hashes,
 > provenance counts, compiled-context flags), so a plain external result is **self-attestation**,
 > not independent certification — a dishonest or buggy adapter can report a pass it didn't

@@ -49,6 +49,10 @@ params, and none of it (descriptions, system-prompt bodies, `input_schema`) reac
 | `requested-permissions` (request ≠ grant, INV-07) | skill capability grants — requesting is not granting | least privilege + explicit user consent |
 | `agents/<id>.md` (`name`/`description`/`model`/`tools` + system-prompt body) | Claude Code **subagent definition** (frontmatter + system prompt) | scoped client/agent identity |
 | `ToolSpec.input_schema` (per `namespace.action`, JSON Schema) | Anthropic tool-use `input_schema` | MCP tool `inputSchema` (JSON Schema) |
+| `ToolSpec` governance fields (`side_effect` read\|write\|destructive, `requires_approval`, `timeout_s`, `audit`) | tool risk/approval metadata advertised to the model | tool annotations (read-only / destructive hints) |
+| `Resource` (`dvah/models/resource.py`; read-only knowledge, untrusted-by-default) | reference knowledge a skill/agent carries into context | MCP **resource** (`uri`/`mimeType`, read-only content) |
+| `Workflow` / `WorkflowStep` (descriptive view of `plans.yaml`, not executed) | orchestration between steps (code-driven vs LLM-driven) | orchestration over tool/resource calls |
+| `PromptStack` (layered `system → agent → skill → task`) | layered instructions (system prompt + agent + skill + task) | trust-boundary layering of instruction sources |
 | `mcp` / `network` / `secrets` declarations | credential custody off the model path (no passthrough) | audience-bound tokens; no token passthrough |
 
 > Same disclaimer as above: these are orientation cross-references, not a compliance claim.

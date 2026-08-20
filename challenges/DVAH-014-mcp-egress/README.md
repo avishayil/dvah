@@ -37,3 +37,10 @@ matter what the plan or the server requests — including look-alike hostnames
 Also note the harness-level companion to this invariant: output that crosses an **external**
 boundary has its trust **assigned by the harness** (`is_external` → downgraded to untrusted
 data), so a tool server cannot declare its own output a trusted instruction.
+
+## Artifacts
+This lab ships an authored `agents/worker.md` (its `AgentDefinition` — frontmatter +
+system prompt, with `capabilities` cross-validated against `environment/agents.yaml`) and a
+`prompts/system.md` base instruction layer. These are advisory reference-architecture
+overlays for the live/subagent path — nothing here reaches `action_hash` or changes the
+security verdict.

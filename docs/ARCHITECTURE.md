@@ -18,11 +18,19 @@ User → Planner(Model) → Plan(proposal, NO authority)
 
 ## Layout
 
-- `dvah/models/` — pure frozen data (`ActionEnvelope` and its parts). No behavior.
-- `dvah/security/` — first-class, swappable security services. Each is a `Protocol`
-  plus a correct default (`Builtin*`). Challenges override these with broken versions.
+- `dvah/models/` — pure frozen data (`ActionEnvelope` and its parts, plus the reference
+  primitives `Resource`, `Workflow`, `PromptStack`). No behavior.
+- `dvah/guardrails/` — first-class, swappable security services (policy, approvals,
+  capabilities, budget, secrets, provenance, revocation, skills, decision). Each is a
+  `Protocol` plus a correct default (`Builtin*`). Challenges override these with broken
+  versions. (Renamed from `dvah/security/`, which now re-exports it via a compat shim —
+  see "Reference architecture (overlay)" below.)
 - `dvah/harness/` — runtime plumbing: `resolver`, `broker` (the gate), `agent`
   (delegation), swappable `executor`, `Harness` driver, `RunContext`.
+- `dvah/memory/` — agent memory (the reference Memory/State layer; moved from
+  `dvah/services/memory_store.py`, which keeps a compat shim).
+- `dvah/resources/`, `dvah/workflows/`, `dvah/prompts/`, `dvah/schemas/` — thin domain
+  homes over the new models + parsers (see the overlay section).
 - `dvah/providers/` — the model seam (`ModelProvider.complete` one-shot, plus the
   stateful `ModelSession.next → ModelTurn`; `DeterministicModel`/`ContextActionModel`
   wrapped by `ScriptedSession`) and `ToolProvider` (`NativeToolProvider`,
@@ -34,12 +42,75 @@ User → Planner(Model) → Plan(proposal, NO authority)
 - `challenges/DVAH-00N-*/` — labs. `vulnerable/` is shipped; `solution/` is the hidden
   reference; `tests/` holds functional/exploit/invariant(/adversarial) suites.
 
-## Why harness/ and security/ are split
+## Why harness/ and guardrails/ are split
 
 Many labs are "the developer put the security check in the wrong place." Keeping the
-security services as first-class, swappable slots (not helpers buried in the harness)
+guardrail services as first-class, swappable slots (not helpers buried in the harness)
 is what makes those labs expressible: a challenge breaks exactly one component and
 leaves everything else correct.
+
+## Reference architecture (overlay)
+
+DVAH is aligned to a 2026 vendor-neutral **AI-application reference architecture**
+(Application → Workflow → Agent → Skill → Tools+Resources → MCP/API → Systems, with the
+cross-cutting Identity / Guardrails / Observability / Evals / Audit concerns and the
+under-layer Models / Memory). This is realized as an **overlay** on DVAH's existing
+`ActionEnvelope` + INV-01…14 spine — that spine stays authoritative. The overlay is
+naming and legibility, never a new authorization path: all of its metadata is advisory and
+**never** reaches `action_hash`, so the security verdict is unchanged.
+
+| Reference primitive | DVAH home |
+|---------------------|-----------|
+| **Application** | `dvah/webapi/` (FastAPI web app) + `dvah/cli.py` |
+| **Workflow** | the agent loop (`Harness.run_session`) driven by `plans.yaml`, plus the *descriptive* `Workflow` model (`dvah/models/workflow.py`, `dvah/workflows/`) — a legible view of the plan, not an executor |
+| **Agent** | `AgentDefinition` (`dvah/models/agent.py`, authored as `agents/<id>.md`) + `RunContext` + the agent-loop runtime (`dvah/harness/`) |
+| **Skill** | `SkillManifest` as a skill-as-package (`dvah/models/skill.py`; `SKILL.md` + resources/schemas) |
+| **Tools** | `ToolSpec` + the shared catalog (`dvah/tools/catalog/*.yaml`) with governance metadata |
+| **Resources** | `Resource` (`dvah/models/resource.py`, `dvah/resources/`) — MCP-style read-only knowledge, untrusted-by-default |
+| **Guardrails** | `dvah/guardrails/` (the renamed security services) |
+| **Memory / State** | `dvah/memory/` (agent memory) + `dvah/services/world_state.py` (world state) |
+| **Models** | `dvah/providers/` (model seam + profiles/router) |
+| **Observability / Audit** | `dvah/observability/trace.py` (the agent-timeline trace) |
+| **Evals** | the per-lab test suites + the conformance battery (`docs/CONFORMANCE.md`) |
+| **Identity** | `dvah/models/identity.py` (`ModelIdentity`) + the envelope's actor/agent/delegation chain |
+
+**Renames + compat shims (done).** The security services were renamed
+`dvah/security/` → `dvah/guardrails/`; `dvah/security/` remains as a re-export shim (to be
+removed later). Agent memory moved to `dvah/memory/store.py` and world state to
+`dvah/services/world_state.py`, both with shims at the old paths (`dvah/services/memory_store.py`).
+
+**New reference-primitive models + domain packages.** `dvah/models/` gained `resource.py`
+(`Resource`), `workflow.py` (`Workflow`/`WorkflowStep`/`StepKind`/`Driver`, descriptive only),
+and `prompt.py` (`PromptScope`/`PromptLayer`/`PromptStack`, layered system→agent→skill→task).
+`ToolSpec` gained governance metadata (`output_schema`, `side_effect` read|write|destructive,
+`requires_approval`, `timeout_s`, `permissions`, `audit`); `SkillManifest` gained
+resources+schemas (skill-as-package); `AgentDefinition` gained output_schema+resources+memory+prompts.
+Thin homes `dvah/resources/`, `dvah/workflows/`, `dvah/prompts/` sit over these models + new
+parsers in `dvah/artifacts/` (`resource_yaml.py`, `workflow_yaml.py`, `prompt.py`), and
+`dvah/schemas/` is a dependency-free output-schema validator. `LoadedChallenge` now also
+exposes `.resources`, `.workflows`, and `.prompts` (alongside `.skills`, `.agent_defs`,
+`.tools_catalog`).
+
+**Tool catalog ↔ approval set.** The catalog (`dvah/tools/catalog/*.yaml`) now carries
+`side_effect` + `requires_approval`, and `dvah/guardrails/policy.py::approval_actions_from_catalog()`
+derives the approval set from it. A unit test pins that derived set **equal** to the frozen
+`DEFAULT_APPROVAL_ACTIONS` — the constant stays the gate input and the catalog is the
+human-facing mirror, so there is no verdict drift.
+
+**Per-lab artifacts (done).** Every lab now ships an authored `agents/<root>.md`
+(AgentDefinition frontmatter — name/description/model/tools/capabilities/delegation — plus a
+system-prompt body, with `capabilities` cross-validated == `environment/agents.yaml` root) and
+a `prompts/system.md` base instruction layer; DVAH-009 also ships a `skills/` package
+(`SKILL.md` + `registry.yaml`). Root `agent_id` values are **grandfathered** (they feed
+`action_hash`); the naming convention applies to `AgentDefinition.name` only. A golden
+`action_hash` characterization test (`tests/integration/test_golden_hashes.py`) guards that
+none of this perturbs the hash.
+
+> **Intended / not yet done.** The per-lab physical relocation of `vulnerable/` →
+> `guardrails/vulnerable/`, `solution/` → `guardrails/solution/`, `tests/` → `evals/`, and
+> `environment/plans.yaml` → `workflows/plans.yaml` is **deferred** (it threads the grading
+> trust-domain isolation). On disk today the lab dirs are still `vulnerable/`, `solution/`,
+> `tests/`, and `environment/plans.yaml`.
 
 ## The agent loop (ModelSession → ModelTurn)
 

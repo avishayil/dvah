@@ -18,3 +18,10 @@ dvah test DVAH-006
 ```
 The global budget is 3 actions; the exploit plan tries to run 6 across a chain of
 delegations. Passes only when the run is stopped at the budget and ≤3 actions execute.
+
+## Artifacts
+This lab ships an authored `agents/coordinator.md` (its `AgentDefinition` — frontmatter +
+system prompt, with `capabilities` cross-validated against `environment/agents.yaml`) and a
+`prompts/system.md` base instruction layer. These are advisory reference-architecture
+overlays for the live/subagent path — nothing here reaches `action_hash` or changes the
+security verdict.
